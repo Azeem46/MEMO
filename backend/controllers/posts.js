@@ -57,12 +57,29 @@ export const updatePost = async (req, res) => {
 export const deletePost = async (req, res) => {
     const { id } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post with id: ${id}`);
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).send(`No post with id: ${id}`);
+    }
 
-    await PostMessage.findByIdAndRemove(id);
+    try {
+        const post = await PostMessage.findById(id);
 
-    res.json({ message: "Post deleted successfully." });
-}
+        if (!post) {
+            return res.status(404).json({ message: "Post not found" });
+        }
+
+        // Check if the current user is the creator of the post
+        if (post.creator !== String(req.userId)) {
+            return res.status(403).json({ message: "Unauthorized action" });
+        }
+
+        await PostMessage.findByIdAndRemove(id);
+
+        res.json({ message: "Post deleted successfully." });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 
 export const likePost = async (req, res) => {
     const { id } = req.params;

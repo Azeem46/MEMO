@@ -4,6 +4,7 @@ import storage from 'redux-persist/lib/storage';
 import { combineReducers } from 'redux';
 import authReducer from '../src/features/auth/authSlice';
 
+
 const persistConfig = {
   key: 'root',
   storage,

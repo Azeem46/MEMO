@@ -4,7 +4,7 @@ import { useRegisterMutation } from '../api/autApi';
 import { toast } from 'react-toastify';
 
 const RegisterScreen = () => {
-    const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', password: '' });
+    const [formData, setFormData] = useState({ name: '', email: '', password: '' });
     const { mutate: signup, isLoading, error } = useRegisterMutation();
     const navigate = useNavigate();
 
@@ -45,34 +45,21 @@ const RegisterScreen = () => {
                 </div>
 
                 <div className="mb-4">
-                    <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
-                        First Name
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                        Name
                     </label>
                     <input
                         type="text"
-                        name="firstName"
-                        value={formData.firstName}
+                        name="name"
+                        value={formData.name}
                         onChange={handleChange}
-                        placeholder="First Name"
+                        placeholder="Enter your Name here"
                         required
                         className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                     />
                 </div>
 
-                <div className="mb-4">
-                    <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
-                        Last Name
-                    </label>
-                    <input
-                        type="text"
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleChange}
-                        placeholder="Last Name"
-                        required
-                        className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                    />
-                </div>
+                
 
                 <div className="mb-4">
                     <label htmlFor="password" className="block text-sm font-medium text-gray-700">

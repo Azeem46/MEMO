@@ -7,4 +7,9 @@ export default defineConfig({
    optimizeDeps: {
     include: ['@reduxjs/toolkit'],
   },
+  server: {
+    proxy: {
+      '/posts': 'http://localhost:5000', // Redirects API calls to the backend
+    },
+  },
 })

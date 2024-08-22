@@ -29,37 +29,38 @@ const LoginScreen = () => {
         <div className="max-w-md mx-auto bg-white p-8 shadow-md rounded-lg">
             <h1 className="text-2xl font-bold mb-6 text-center">Sign In</h1>
 
-            <form onSubmit={handleSubmit}>
-                <div className="mb-4">
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                        Email Address
-                    </label>
-                    <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        placeholder="Email"
-                        required
-                        className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" 
-                    />
-                </div>
+           <form onSubmit={handleSubmit}>
+    <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">
+            Email Address
+            <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Email"
+                required
+                autoComplete="true"
+                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" 
+            />
+        </label>
+    </div>
 
-                <div className="mb-4">
-                    <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                        Password
-                    </label>
-                    <input
-                        type="password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        placeholder="Password"
-                        required
-                        className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" 
-                    />
-                </div>
-
+    <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">
+            Password
+            <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Password"
+                required
+                autoComplete="true"
+                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" 
+            />
+        </label>
+    </div>
                 <button
                     type="submit"
                     disabled={isLoading}
