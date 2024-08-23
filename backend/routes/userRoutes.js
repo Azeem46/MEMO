@@ -2,7 +2,7 @@ import express from "express";
 import rateLimit from 'express-rate-limit';
 const router = express.Router();
 
-import { signin, signup, logoutUser } from "../controllers/user.js";
+import { signin, signup, logoutUser } from "../controllers/UserContollers.js";
 import validateUser from '../middleware/validateUser.js';
 
 // Rate limiter for signin and signup routes

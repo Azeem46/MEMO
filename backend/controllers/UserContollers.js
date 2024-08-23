@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import asyncHandler from "express-async-handler";
-import UserModal from '../models/user.js';
+import UserModal from '../models/UserModels.js';
 
 const secret = process.env.JWT_SECRET || 'test'; // Use environment variable for secret
 const tokenExpiry = '1y'; // Token expiration set to one year
@@ -120,15 +120,15 @@ export const signup = async (req, res) => {
       name // Use name directly
     });
 
-    // Generate token
-    const token = jwt.sign(
-      { email: result.email, id: result._id },
-      secret,
-      { expiresIn: tokenExpiry }
-    );
+    // // Generate token
+    // const token = jwt.sign(
+    //   { email: result.email, id: result._id },
+    //   secret,
+    //   { expiresIn: tokenExpiry }
+    // );
 
     // Respond with user and token
-    res.status(201).json({ result, token });
+    res.status(201).json({ result });
   } catch (error) {
     console.error('Signup error:', error);
     res.status(500).json({ message: 'Something went wrong' });

@@ -4,8 +4,8 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 // import rateLimit from 'express-rate-limit';
-import postRoutes from './routes/posts.js';
-import userRoutes from './routes/user.js';
+import postRoutes from './routes/postsRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 const app = express();
 dotenv.config();
