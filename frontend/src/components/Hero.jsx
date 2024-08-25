@@ -6,19 +6,19 @@ import login from '../../public/images/home.png';
 
 const Hero = () => {
   const navigate = useNavigate();
-  const { user } = useSelector((state) => state.auth);
+  const { persist:root } = useSelector((state) => state.auth || {});
 
   useEffect(() => {
-    if (user) {
+    if (root) {
       navigate('/'); // Redirect to home page if user is logged in
     }
-  }, [user, navigate]);
+  }, [root, navigate]);
 
   // const handleClick = () => {
   //   navigate('/create');
   // };
 
-  return user ? (<>
+  return root ? (<>
   <div className="container mx-auto p-4">
      hi
     </div>

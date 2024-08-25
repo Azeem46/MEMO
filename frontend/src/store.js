@@ -16,7 +16,9 @@ const rootReducer = combineReducers({
 });
 
 const store = configureStore({
-  reducer: rootReducer,
+  reducer: {authReducer,
+    rootReducer
+  },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
