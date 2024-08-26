@@ -1,22 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useRef }  from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { FaSignInAlt, FaSignOutAlt, FaUserCircle, FaCaretDown } from 'react-icons/fa';
-import download from '../../public/images/download.png';
 import { logout } from '../features/auth/authSlice';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { logout as logoutService } from '../services/authService';
+import download from '../../public/images/download.png';
+import { FaSignInAlt, FaSignOutAlt, FaUserCircle, FaCaretDown } from 'react-icons/fa';
+import { useMutation } from 'react-query';
 
 const Header = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+
   const location = useLocation();
-const { user } = useSelector((state) => state.auth || {});
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate('/login');
-  };
 
   const toggleDropdown = () => {
     setDropdownOpen(!isDropdownOpen);
@@ -40,6 +36,14 @@ const { user } = useSelector((state) => state.auth || {});
     setDropdownOpen(false);
   }, [location.pathname]);
 
+ const user = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
+
+  const mutation = useMutation(logoutService, {
+    onSuccess: () => {
+      dispatch(logout());
+    },
+  });
   return (
     <header className="bg-white shadow-md py-6">
       <nav className="container mx-auto flex justify-between items-center">
@@ -64,10 +68,14 @@ const { user } = useSelector((state) => state.auth || {});
                   <Link to="/profile" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
                     Profile
                   </Link>
-                  <button onClick={handleLogout} className="block w-full px-4 py-2 text-gray-700 hover:bg-gray-100 text-left">
-                    <FaSignOutAlt className="mr-2" />
-                    Logout
-                  </button>
+                   <button
+                onClick={() => mutation.mutate()}
+               className="block w-full px-4 py-2 text-gray-700 hover:bg-gray-100 text-left"
+              >
+                <FaSignOutAlt className="mr-2" />
+
+                Logout
+              </button>
                 </div>
               )}
             </div>
@@ -90,5 +98,7 @@ const { user } = useSelector((state) => state.auth || {});
     </header>
   );
 };
-
 export default Header;
+
+
+

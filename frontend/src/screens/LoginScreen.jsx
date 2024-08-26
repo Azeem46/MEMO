@@ -1,67 +1,64 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useLoginMutation } from '../api/autApi';
+import { useDispatch } from 'react-redux';
+import { setCredentials } from '../features/auth/authSlice';
+import { useMutation } from 'react-query';
+import { login } from '../services/authService';
+import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-const LoginScreen = () => {
-    const [formData, setFormData] = useState({ email: '', password: '' });
-    const { mutate: login, isLoading, error } = useLoginMutation();
-    const navigate = useNavigate();
+export default function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+   const { isLoading, error } = useMutation();
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+  const mutation = useMutation(({ email, password }) => login(email, password), {
+    onSuccess: (data) => {
+      dispatch(setCredentials(data));
+      toast.success('Logged in successfully!');
+       navigate('/');
+    },
+  });
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        login(formData, {
-            onSuccess: () => {
-                toast.success('Logged in successfully!');
-                navigate('/');
-            },
-            onError: () => {
-                toast.error('Login failed. Please try again.');
-            }
-        });
-    };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    mutation.mutate({ email, password });
+  };
 
-    return (
-        <div className="max-w-md mx-auto bg-white p-8 shadow-md rounded-lg">
+  return (
+    <div className="max-w-md mx-auto bg-white p-8 shadow-md rounded-lg">
             <h1 className="text-2xl font-bold mb-6 text-center">Sign In</h1>
+      <form onSubmit={handleSubmit} >
+        <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">Email
 
-           <form onSubmit={handleSubmit}>
-    <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-            Email Address
             <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Email"
-                required
-                autoComplete="true"
-                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" 
-            />
-        </label>
-    </div>
-
-    <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
+            required
+            autoComplete="true"
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+          />
+          </label>
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">
             Password
-            <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Password"
-                required
-                autoComplete="true"
-                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" 
-            />
-        </label>
-    </div>
-                <button
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" 
+            placeholder="Password"
+            required
+            autoComplete="true"
+          />
+          </label>
+        </div>
+        <button
                     type="submit"
                     disabled={isLoading}
                     className={`w-full py-2 px-4 mt-4 bg-blue-600 text-white font-medium rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
@@ -78,8 +75,6 @@ const LoginScreen = () => {
                     New Customer? <Link to="/register" className="text-blue-600 hover:underline">Register</Link>
                 </p>
             </div>
-        </div>
-    );
-};
-
-export default LoginScreen;
+    </div>
+  );
+}

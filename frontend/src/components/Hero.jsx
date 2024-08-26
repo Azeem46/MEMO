@@ -3,22 +3,21 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import login from '../../public/images/home.png';
 
-
 const Hero = () => {
   const navigate = useNavigate();
-  const { persist:root } = useSelector((state) => state.auth || {});
+const user = useSelector((state) => state.auth.user);
 
   useEffect(() => {
-    if (root) {
+    if (user) {
       navigate('/'); // Redirect to home page if user is logged in
     }
-  }, [root, navigate]);
+  }, [user, navigate]);
 
   // const handleClick = () => {
   //   navigate('/create');
   // };
 
-  return root ? (<>
+  return user ? (<>
   <div className="container mx-auto p-4">
      hi
     </div>
