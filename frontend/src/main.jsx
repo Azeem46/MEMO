@@ -17,9 +17,9 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { QueryClientProvider } from 'react-query';
 import queryclient from './queryclient.js';
 import ProfileScreen from './screens/ProfileScreen.jsx'
-
-
-
+import PostList from './components/PostList.jsx'
+import PostForm from './components/PostForm.jsx'
+import PostDetails from './components/PostDetails.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -30,6 +30,10 @@ const router = createBrowserRouter(
       <Route path='' element={<PrivateRoute />} >
       <Route path='/profile' element={<ProfileScreen />}/>
       </Route>
+      <Route path="/" element={<PostList />} />
+        <Route path="/create" element={<PostForm />} />
+        <Route path="/edit/:id" element={<PostForm />} />
+        <Route path="/posts/:id" element={<PostDetails />} />
       </Route>
   )
 )

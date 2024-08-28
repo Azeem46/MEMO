@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import login from '../../public/images/home.png';
+import PostList from './PostList';
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const user = useSelector((state) => state.auth.user);
 
   return user ? (<>
   <div className="container mx-auto p-4">
-     hi
+     <PostList />
     </div>
   </>):(
     <div className="flex flex-col items-center justify-center min-h-screen">

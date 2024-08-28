@@ -6,6 +6,7 @@ import { logout as logoutService } from '../services/authService';
 import download from '../../public/images/download.png';
 import { FaSignInAlt, FaSignOutAlt, FaUserCircle, FaCaretDown } from 'react-icons/fa';
 import { useMutation } from 'react-query';
+import { toast } from 'react-toastify';
 
 const Header = () => {
 
@@ -42,6 +43,7 @@ const Header = () => {
   const mutation = useMutation(logoutService, {
     onSuccess: () => {
       dispatch(logout());
+      toast.success('Logged out successfully!');
     },
   });
   return (
