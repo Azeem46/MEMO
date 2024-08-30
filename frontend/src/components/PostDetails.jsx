@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPost, commentPost, updatePost } from "../features/post/postSlice";
+import { fetchPost, commentPost } from "../features/post/postSlice";
 import { useParams } from "react-router-dom";
 
 const PostDetails = () => {
@@ -8,9 +8,9 @@ const PostDetails = () => {
   const { id } = useParams();
   const post = useSelector((state) => state.posts.post);
   const [comment, setComment] = useState("");
+  const user = useSelector((state) => state.auth.user.name);
 
   useEffect(() => {
-    console.log("Fetching post with ID:", id); // Log ID
     if (id) {
       dispatch(fetchPost(id));
     }
@@ -24,17 +24,15 @@ const PostDetails = () => {
       return;
     }
 
-    console.log("Posting comment with ID:", id);
-    console.log("Comment value:", comment);
+    const formattedComment = `${user}: ${comment}`;
 
     try {
-      await dispatch(commentPost({ id, comment }));
-      console.log("Comment added successfully");
-
-      // Optionally log the post state after adding the comment
-      const updatedPost = await dispatch(fetchPost(id));
-      console.log("Updated post:", updatedPost);
+      // Dispatch the comment with the formatted string
+      await dispatch(commentPost({ id, comment: formattedComment }));
       setComment("");
+
+      // Optionally refetch the post to get the latest comments
+      await dispatch(fetchPost(id));
     } catch (error) {
       console.error("Error adding comment:", error);
     }
