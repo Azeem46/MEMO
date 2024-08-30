@@ -71,6 +71,7 @@ export const getPost = async (req, res) => {
 export const createPost = async (req, res) => {
   const post = req.body;
 
+  console.log("User ID from middleware:", req.userId);
   const newPostMessage = new Posts({
     ...post,
     creator: req.userId,

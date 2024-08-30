@@ -1,5 +1,3 @@
-// src/components/PostList.js
-
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -10,6 +8,7 @@ const PostList = () => {
   const posts = useSelector((state) => state.posts.posts);
   const status = useSelector((state) => state.posts.status);
   const error = useSelector((state) => state.posts.error);
+  const user = useSelector((state) => state.auth.user.id);
 
   useEffect(() => {
     if (status === "idle") {
@@ -27,28 +26,46 @@ const PostList = () => {
       {status === "loading" && <p>Loading...</p>}
       {status === "failed" && <p>Error: {error}</p>}
       <div className="space-y-4">
-        {posts.map((post) => (
-          <div key={post._id} className="border p-4 rounded">
-            <h2 className="text-xl font-semibold">{post.title}</h2>
-            <p>{post.message}</p>
-            <p>{post.tags}</p>
-            <img src={post.selectedFile} alt={post.title} />
-            <Link to={`/edit/${post._id}`} className="text-blue-500">
-              Edit
-            </Link>
-            <button
-              onClick={() => handleDelete(post._id)}
-              className="text-red-500 ml-4"
-            >
-              Delete
-            </button>
-            <div className="mt-2">
-              <Link to={`/posts/${post._id}`} className="text-blue-500">
-                View Details
-              </Link>
+        {posts.map((post) => {
+          // Assuming post.tags is an array of comma-separated strings
+          const tags = post.tags[0].split(",").map((tag) => tag.trim());
+
+          return (
+            <div key={post._id} className="border p-4 rounded">
+              <h2 className="text-xl font-semibold">{post.creator}</h2>
+              <h2 className="text-xl font-semibold">{post.title}</h2>
+              <p>{post.message}</p>
+              <p>
+                {tags.map((tag, index) => (
+                  <React.Fragment key={index}>
+                    {index > 0 && " "}#{tag}
+                  </React.Fragment>
+                ))}
+              </p>
+              <img src={post.selectedFile} alt={post.title} />
+
+              {user === post.creator && (
+                <>
+                  <Link to={`/edit/${post._id}`} className="text-blue-500">
+                    Edit
+                  </Link>
+                  <button
+                    onClick={() => handleDelete(post._id)}
+                    className="text-red-500 ml-4"
+                  >
+                    Delete
+                  </button>
+                </>
+              )}
+
+              <div className="mt-2">
+                <Link to={`/posts/${post._id}`} className="text-blue-500">
+                  View Details
+                </Link>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
