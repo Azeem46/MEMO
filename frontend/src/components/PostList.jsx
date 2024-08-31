@@ -40,7 +40,7 @@ const PostList = () => {
       {status === "failed" && <p className="text-red-500">Error: {error}</p>}
 
       {status === "succeeded" && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 justify-start">
           {posts.map((post) => {
             const tags = post.tags[0].split(",").map((tag) => tag.trim());
 
@@ -58,7 +58,7 @@ const PostList = () => {
                   />
                   <div className="absolute inset-0 bg-black bg-opacity-50 flex items-start justify-start p-2">
                     <h2 className="text-white text-lg font-semibold">
-                      Author:{post.creatorName}
+                      Author: {post.creatorName}
                     </h2>
                   </div>
                 </div>
@@ -70,7 +70,6 @@ const PostList = () => {
                   ))}
                 </p>
                 <b>
-                  {" "}
                   <p className="mt-2 ml-4 text-2xl">{post.title}</p>
                 </b>
                 <div className="p-4">

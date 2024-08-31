@@ -1,16 +1,16 @@
-import React, { useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import login from '../../public/images/home.png';
-import PostList from './PostList';
+import React, { useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import login from "../../public/images/home.png";
+import PostList from "./PostList";
 
 const Hero = () => {
   const navigate = useNavigate();
-const user = useSelector((state) => state.auth.user);
+  const user = useSelector((state) => state.auth.user);
 
   useEffect(() => {
     if (user) {
-      navigate('/'); // Redirect to home page if user is logged in
+      navigate("/"); // Redirect to home page if user is logged in
     }
   }, [user, navigate]);
 
@@ -18,11 +18,13 @@ const user = useSelector((state) => state.auth.user);
   //   navigate('/create');
   // };
 
-  return user ? (<>
-  <div className="container mx-auto p-4">
-     <PostList />
-    </div>
-  </>):(
+  return user ? (
+    <>
+      <>
+        <PostList />
+      </>
+    </>
+  ) : (
     <div className="flex flex-col items-center justify-center min-h-screen">
       {/* Image Section */}
       <div className="mb-8">

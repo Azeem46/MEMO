@@ -43,6 +43,10 @@ export const commentPost = createAsyncThunk(
   }
 );
 
+export const clearPost = () => (dispatch) => {
+  dispatch({ type: "CLEAR_POST" });
+};
+
 // Slice
 const postSlice = createSlice({
   name: "posts",
@@ -94,6 +98,9 @@ const postSlice = createSlice({
         if (state.post && state.post._id === action.payload._id) {
           state.post = action.payload;
         }
+      })
+      .addCase("CLEAR_POST", (state) => {
+        state.post = null;
       });
   },
 });
