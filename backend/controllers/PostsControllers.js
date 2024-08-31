@@ -1,6 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
-
+import User from "../models/UserModels.js";
 import Posts from "../models/PostModels.js";
 
 const router = express.Router();
@@ -72,13 +72,19 @@ export const createPost = async (req, res) => {
   const post = req.body;
 
   console.log("User ID from middleware:", req.userId);
-  const newPostMessage = new Posts({
-    ...post,
-    creator: req.userId,
-    createdAt: new Date().toISOString(),
-  });
 
   try {
+    // Fetch the user's name from the User model
+    const user = await User.findById(req.userId);
+    const creatorName = user ? user.name : "Unknown"; // Fallback if user is not found
+
+    const newPostMessage = new Posts({
+      ...post,
+      creator: req.userId,
+      creatorName, // Add creatorName here
+      createdAt: new Date().toISOString(),
+    });
+
     await newPostMessage.save();
 
     res.status(201).json(newPostMessage);
@@ -86,7 +92,6 @@ export const createPost = async (req, res) => {
     res.status(409).json({ message: error.message });
   }
 };
-
 export const updatePost = async (req, res) => {
   const { id } = req.params;
   const { title, message, creator, selectedFile, tags } = req.body;

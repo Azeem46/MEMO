@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createPost, updatePost } from "../features/post/postSlice";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const PostForm = () => {
   const dispatch = useDispatch();
@@ -19,13 +21,24 @@ const PostForm = () => {
   });
 
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [showLoader, setShowLoader] = useState(false);
 
   useEffect(() => {
     if (postToEdit) {
       setPost(postToEdit);
-      setIsEditing(true); // Set editing mode to true if we're editing a post
+      setIsEditing(true);
     }
   }, [postToEdit]);
+
+  useEffect(() => {
+    if (loading) {
+      const timer = setTimeout(() => setShowLoader(true), 500); // Delay of 500ms
+      return () => clearTimeout(timer);
+    } else {
+      setShowLoader(false);
+    }
+  }, [loading]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -45,13 +58,19 @@ const PostForm = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
     if (id) {
-      dispatch(updatePost({ id, updatedPost: post }));
+      await dispatch(updatePost({ id, updatedPost: post }));
+      toast.success("Post updated successfully!");
     } else {
-      dispatch(createPost(post));
+      await dispatch(createPost(post));
+      toast.success("Post created successfully!");
     }
+
+    setLoading(false);
     navigate("/");
   };
 
@@ -103,7 +122,6 @@ const PostForm = () => {
           />
         </div>
 
-        {/* Conditionally render the image upload field only if not editing */}
         {!isEditing && (
           <div>
             <label htmlFor="file" className="block text-gray-700">
@@ -119,9 +137,16 @@ const PostForm = () => {
         )}
         <button
           type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex justify-center items-center"
+          disabled={loading}
         >
-          {id ? "Update Post" : "Create Post"}
+          {showLoader ? (
+            <ClipLoader size={24} color={"#ffffff"} delay={1000} />
+          ) : id ? (
+            "Update Post"
+          ) : (
+            "Create Post"
+          )}
         </button>
       </form>
     </div>
