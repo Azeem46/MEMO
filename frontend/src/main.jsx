@@ -34,7 +34,7 @@ const router = createBrowserRouter(
       <Route path="/" element={<PostList />} />
       <Route path="/create" element={<PostForm />} />
       <Route path="/edit/:id" element={<PostForm />} />
-      <Route path="/posts/:id" element={<PostDetails />} />
+      <Route path="/post/:id" element={<PostDetails />} />
     </Route>
   )
 );

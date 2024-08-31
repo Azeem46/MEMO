@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPost, clearPost } from "../features/post/postSlice";
+import { fetchPost, clearPost, commentPost } from "../features/post/postSlice";
 import { useParams } from "react-router-dom";
 import { ColorRing, FidgetSpinner, ThreeCircles } from "react-loader-spinner";
 

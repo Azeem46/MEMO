@@ -24,7 +24,7 @@ const PostList = () => {
   };
 
   const handlePostClick = (postId) => {
-    navigate(`/posts/${postId}`);
+    navigate(`/post/${postId}`);
   };
 
   return (
