@@ -1,5 +1,3 @@
-// src/components/PostForm.js
-
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createPost, updatePost } from "../features/post/postSlice";
@@ -20,9 +18,12 @@ const PostForm = () => {
     selectedFile: "",
   });
 
+  const [isEditing, setIsEditing] = useState(false);
+
   useEffect(() => {
     if (postToEdit) {
       setPost(postToEdit);
+      setIsEditing(true); // Set editing mode to true if we're editing a post
     }
   }, [postToEdit]);
 
@@ -101,17 +102,21 @@ const PostForm = () => {
             className="w-full p-2 border border-gray-300 rounded"
           />
         </div>
-        <div>
-          <label htmlFor="file" className="block text-gray-700">
-            Image
-          </label>
-          <input
-            type="file"
-            id="file"
-            onChange={handleFileChange}
-            className="w-full p-2 border border-gray-300 rounded"
-          />
-        </div>
+
+        {/* Conditionally render the image upload field only if not editing */}
+        {!isEditing && (
+          <div>
+            <label htmlFor="file" className="block text-gray-700">
+              Image
+            </label>
+            <input
+              type="file"
+              id="file"
+              onChange={handleFileChange}
+              className="w-full p-2 border border-gray-300 rounded"
+            />
+          </div>
+        )}
         <button
           type="submit"
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"

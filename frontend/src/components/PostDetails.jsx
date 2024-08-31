@@ -44,6 +44,7 @@ const PostDetails = () => {
         <>
           <h1 className="text-2xl font-bold mb-4">{post.title}</h1>
           <p className="mb-4">{post.message}</p>
+          <img src={post.selectedFile} alt={post.tile} />
           <div className="mb-4">
             <h2 className="text-xl font-semibold">Comments</h2>
             <form onSubmit={handleCommentSubmit} className="mt-2">
@@ -64,7 +65,8 @@ const PostDetails = () => {
             <div className="mt-4">
               {post.comments.map((c, index) => (
                 <div key={index} className="border p-2 rounded mb-2">
-                  {c}
+                  <p className="font-bold inline">{c.split(": ")[0]}:</p>
+                  <span className="ml-2">{c.split(":")[1]}</span>
                 </div>
               ))}
             </div>
