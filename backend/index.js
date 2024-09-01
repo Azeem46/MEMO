@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 // import rateLimit from 'express-rate-limit';
 import postRoutes from "./routes/postsRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import commentRoute from "./routes/commentsRoutes.js";
 
 const app = express();
 dotenv.config();
@@ -26,6 +27,7 @@ app.use(cors());
 // Routes
 app.use("/posts", postRoutes);
 app.use("/user", userRoutes);
+app.use("/comments", commentRoute);
 
 app.use(
   cors({

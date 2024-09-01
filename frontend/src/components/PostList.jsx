@@ -56,11 +56,6 @@ const PostList = () => {
                     alt={post.title}
                     className="w-full h-40 object-cover"
                   />
-                  <div className="absolute inset-0 bg-black bg-opacity-50 flex items-start justify-start p-2">
-                    <h2 className="text-white text-lg font-semibold">
-                      Author: {post.creatorName}
-                    </h2>
-                  </div>
                 </div>
                 <p className="mb-2 mt-2 ml-4">
                   {tags.map((tag, index) => (
@@ -85,28 +80,34 @@ const PostList = () => {
                     <i>{post.message}</i>
                   </p>
 
-                  {user === post.creator && (
-                    <div className="flex space-x-4 mt-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/edit/${post._id}`);
-                        }}
-                        className="text-blue-500 hover:underline"
-                      >
-                        <FaEdit />
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDelete(post._id);
-                        }}
-                        className="text-red-500 hover:underline"
-                      >
-                        <FaTrashAlt />
-                      </button>
+                  <div className="flex justify-between mt-5">
+                    {user === post.creator && (
+                      <div className="flex space-x-4">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/edit/${post._id}`);
+                          }}
+                          className="text-blue-500 hover:underline"
+                        >
+                          <FaEdit />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(post._id);
+                          }}
+                          className="text-red-500 hover:underline"
+                        >
+                          <FaTrashAlt />
+                        </button>
+                      </div>
+                    )}
+
+                    <div className="text-sm text-gray-500 font-medium px-2">
+                      Published by: {post.creatorName}
                     </div>
-                  )}
+                  </div>
                 </div>
               </div>
             );
