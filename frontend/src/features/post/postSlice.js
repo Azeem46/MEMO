@@ -2,6 +2,7 @@
 
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import * as api from "../../services/postService";
+import * as commentApi from "../../services/commentService";
 
 // Thunks for async actions
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async (page) => {
@@ -35,10 +36,34 @@ export const deletePost = createAsyncThunk("posts/deletePost", async (id) => {
   return id;
 });
 
-export const commentPost = createAsyncThunk(
-  "posts/commentPost",
-  async ({ id, comment }) => {
-    const response = await api.commentPost(comment, id); // Passing comment first, then id
+export const fetchComments = createAsyncThunk(
+  "comments/fetchComments",
+  async (postId) => {
+    const response = await commentApi.fetchComments(postId);
+    return response.data;
+  }
+);
+
+export const createComment = createAsyncThunk(
+  "comments/createComment",
+  async ({ postId, text }) => {
+    const response = await commentApi.createComment({ postId, text });
+    return response.data;
+  }
+);
+
+export const deleteComment = createAsyncThunk(
+  "comments/deleteComment",
+  async (id) => {
+    await commentApi.deleteComment(id);
+    return id;
+  }
+);
+
+export const updateComment = createAsyncThunk(
+  "comments/updateComment",
+  async ({ id, text }) => {
+    const response = await commentApi.updateComment(id, text);
     return response.data;
   }
 );
@@ -53,6 +78,7 @@ const postSlice = createSlice({
   initialState: {
     posts: [],
     post: null,
+    comments: [], // Added comments array to state
     status: "idle",
     error: null,
   },
@@ -87,16 +113,24 @@ const postSlice = createSlice({
       .addCase(deletePost.fulfilled, (state, action) => {
         state.posts = state.posts.filter((post) => post._id !== action.payload);
       })
-      .addCase(commentPost.fulfilled, (state, action) => {
-        const index = state.posts.findIndex(
-          (post) => post._id === action.payload._id
+      // Comment-related reducers
+      .addCase(fetchComments.fulfilled, (state, action) => {
+        state.comments = action.payload;
+      })
+      .addCase(createComment.fulfilled, (state, action) => {
+        state.comments.push(action.payload);
+      })
+      .addCase(deleteComment.fulfilled, (state, action) => {
+        state.comments = state.comments.filter(
+          (comment) => comment._id !== action.payload
+        );
+      })
+      .addCase(updateComment.fulfilled, (state, action) => {
+        const index = state.comments.findIndex(
+          (comment) => comment._id === action.payload._id
         );
         if (index >= 0) {
-          state.posts[index] = action.payload;
-        }
-        // Update the single post state
-        if (state.post && state.post._id === action.payload._id) {
-          state.post = action.payload;
+          state.comments[index] = action.payload;
         }
       })
       .addCase("CLEAR_POST", (state) => {

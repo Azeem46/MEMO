@@ -1,7 +1,9 @@
+// src/services/commentService.js
+
 import axios from "axios";
 
 // Create an axios instance
-const API = axios.create({ baseURL: "http://localhost:5000" }); // Replace with your backend URL
+const API = axios.create({ baseURL: "http://localhost:5000" });
 
 // Set up request interceptor to include auth token
 API.interceptors.request.use((req) => {
@@ -22,7 +24,7 @@ API.interceptors.request.use((req) => {
           /"/g,
           ""
         )}`;
-        console.log("Request Headers After Setting Token:", req.headers); // Log the request headers after setting the token
+        console.log("Request Headers After Setting 111:", req.headers); // Log the request headers after setting the token
       } else {
         console.log("Token is missing or undefined in User Profile."); // Log if token is missing
       }
@@ -36,17 +38,9 @@ API.interceptors.request.use((req) => {
   return req;
 });
 
-// Define API methods
-export const fetchPosts = (page) => API.get(`/posts?page=${page}`);
-export const fetchPost = (id) => API.get(`/posts/${id}`);
-export const fetchPostsBySearch = (searchQuery) =>
-  API.get(
-    `/posts/search?searchQuery=${searchQuery.search || "none"}&tags=${
-      searchQuery.tags
-    }`
-  );
-export const createPost = (newPost) => API.post("/posts", newPost);
-export const likePost = (id) => API.patch(`/posts/${id}/likePost`);
-export const updatePost = (id, updatedPost) =>
-  API.patch(`/posts/${id}`, updatedPost);
-export const deletePost = (id) => API.delete(`/posts/${id}`);
+// Define comment-related API methods
+export const fetchComments = (commentId) => API.get(`/comments/${commentId}`);
+export const createComment = (newComment) => API.post("/comments", newComment);
+export const deleteComment = (id) => API.delete(`/comments/${id}`);
+export const updateComment = (id, text) =>
+  API.patch(`/comments/${id}`, { text });
