@@ -36,6 +36,11 @@ export const deletePost = createAsyncThunk("posts/deletePost", async (id) => {
   return id;
 });
 
+export const likePost = createAsyncThunk("posts/likePost", async (id) => {
+  const response = await api.likePost(id);
+  return response.data;
+});
+
 export const fetchComments = createAsyncThunk(
   "comments/fetchComments",
   async (postId) => {
@@ -112,6 +117,14 @@ const postSlice = createSlice({
       })
       .addCase(deletePost.fulfilled, (state, action) => {
         state.posts = state.posts.filter((post) => post._id !== action.payload);
+      })
+      .addCase(likePost.fulfilled, (state, action) => {
+        const index = state.posts.findIndex(
+          (post) => post._id === action.payload._id
+        );
+        if (index >= 0) {
+          state.posts[index] = action.payload;
+        }
       })
       // Comment-related reducers
       .addCase(fetchComments.fulfilled, (state, action) => {

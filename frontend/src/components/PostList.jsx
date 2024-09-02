@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { fetchPosts, deletePost } from "../features/post/postSlice";
-import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { fetchPosts, deletePost, likePost } from "../features/post/postSlice";
+import { FaEdit, FaTrashAlt, FaHeart, FaRegHeart } from "react-icons/fa";
 import SyncLoader from "react-spinners/SyncLoader";
 
 const PostList = () => {
@@ -11,7 +11,7 @@ const PostList = () => {
   const posts = useSelector((state) => state.posts.posts);
   const status = useSelector((state) => state.posts.status);
   const error = useSelector((state) => state.posts.error);
-  const user = useSelector((state) => state.auth.user.id);
+  const userId = useSelector((state) => state.auth.user.id);
 
   useEffect(() => {
     if (status === "idle") {
@@ -21,6 +21,10 @@ const PostList = () => {
 
   const handleDelete = (id) => {
     dispatch(deletePost(id));
+  };
+
+  const handleLike = (id) => {
+    dispatch(likePost(id));
   };
 
   const handlePostClick = (postId) => {
@@ -43,6 +47,7 @@ const PostList = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 justify-start">
           {posts.map((post) => {
             const tags = post.tags[0].split(",").map((tag) => tag.trim());
+            const isLiked = post.likes.includes(userId);
 
             return (
               <div
@@ -80,30 +85,43 @@ const PostList = () => {
                     <i>{post.message}</i>
                   </p>
 
-                  <div className="flex justify-between mt-5">
-                    {user === post.creator && (
-                      <div className="flex space-x-4">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigate(`/edit/${post._id}`);
-                          }}
-                          className="text-blue-500 hover:underline"
-                        >
-                          <FaEdit />
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDelete(post._id);
-                          }}
-                          className="text-red-500 hover:underline"
-                        >
-                          <FaTrashAlt />
-                        </button>
-                      </div>
-                    )}
-
+                  <div className="flex justify-between items-center mt-5">
+                    <div className="flex space-x-4">
+                      {userId === post.creator && (
+                        <>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/edit/${post._id}`);
+                            }}
+                            className="text-blue-500 hover:underline"
+                          >
+                            <FaEdit />
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(post._id);
+                            }}
+                            className="text-red-500 hover:underline"
+                          >
+                            <FaTrashAlt />
+                          </button>
+                        </>
+                      )}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleLike(post._id);
+                        }}
+                        className={`flex items-center ${
+                          isLiked ? "text-red-500" : "text-gray-500"
+                        } hover:underline`}
+                      >
+                        {isLiked ? <FaHeart /> : <FaRegHeart />}
+                        <span className="ml-2">{post.likes.length}</span>
+                      </button>
+                    </div>
                     <div className="text-sm text-gray-500 font-medium px-2">
                       Published by: {post.creatorName}
                     </div>

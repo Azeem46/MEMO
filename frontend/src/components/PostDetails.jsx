@@ -91,7 +91,7 @@ const PostDetails = () => {
             <img
               src={post.selectedFile}
               alt={post.title}
-              className="w-full h-96 object-cover rounded-lg shadow-md mb-6"
+              className="w-full h-72 object-cover rounded-lg shadow-md mb-6"
             />
             <p className="text-gray-700 mb-4">{post.message}</p>
 
