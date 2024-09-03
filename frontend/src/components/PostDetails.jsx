@@ -22,6 +22,7 @@ const PostDetails = () => {
   const [editCommentId, setEditCommentId] = useState(null);
   const [editText, setEditText] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false); // Add local state for submitting
   const user = useSelector((state) => state.auth.user.name);
   const userId = useSelector((state) => state.auth.user.id);
 
@@ -41,13 +42,20 @@ const PostDetails = () => {
       return;
     }
 
+    setIsSubmitting(true); // Set submitting state to true
+
     try {
-      await dispatch(
+      const newComment = await dispatch(
         createComment({ postId: id, text: `${user}: ${comment}` })
       );
       setComment("");
+      // Optionally, you can manually update the comments state if needed
+      dispatch(fetchComments(id)); // Re-fetch comments or
+      dispatch(fetchPost(id)); // Re-fetch post to get the latest comments
     } catch (error) {
       console.error("Error adding comment:", error);
+    } finally {
+      setIsSubmitting(false); // Reset submitting state
     }
   };
 
@@ -73,7 +81,9 @@ const PostDetails = () => {
       setEditText("");
       setIsUpdating(false); // Stop loading
 
-      window.location.reload(); // Refresh the page
+      // Optionally, you can manually update the comments state if needed
+      dispatch(fetchComments(id)); // Re-fetch comments or
+      dispatch(fetchPost(id)); // Re-fetch post to get the latest comments
     } catch (error) {
       console.error("Error updating comment:", error);
       setIsUpdating(false); // Stop loading even if there's an error
@@ -131,8 +141,20 @@ const PostDetails = () => {
               <button
                 type="submit"
                 className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 shadow-md transition-all"
+                disabled={isSubmitting} // Disable button during submission
               >
-                Post
+                {isSubmitting ? (
+                  <ThreeCircles
+                    visible={true}
+                    height="24"
+                    width="24"
+                    ariaLabel="submitting-loading"
+                    wrapperStyle={{ display: "inline-block" }}
+                    colors={["#fff", "#f8b26a", "#abbd81", "#849b87"]}
+                  />
+                ) : (
+                  "Post"
+                )}
               </button>
             </form>
 

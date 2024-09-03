@@ -21,6 +21,7 @@ import ProfileScreen from "./screens/ProfileScreen.jsx";
 import PostList from "./components/PostList.jsx";
 import PostForm from "./components/PostForm.jsx";
 import PostDetails from "./components/PostDetails.jsx";
+import SearchResults from "./components/SearchResults.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -35,6 +36,7 @@ const router = createBrowserRouter(
       <Route path="/create" element={<PostForm />} />
       <Route path="/edit/:id" element={<PostForm />} />
       <Route path="/post/:id" element={<PostDetails />} />
+      {/* <Route path="/search" element={<SearchResults />} /> */}
     </Route>
   )
 );

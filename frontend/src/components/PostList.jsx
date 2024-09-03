@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { fetchPosts, deletePost, likePost } from "../features/post/postSlice";
 import { FaEdit, FaTrashAlt, FaHeart, FaRegHeart } from "react-icons/fa";
 import SyncLoader from "react-spinners/SyncLoader";
@@ -8,16 +8,16 @@ import SyncLoader from "react-spinners/SyncLoader";
 const PostList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation(); // Hook to track location
   const posts = useSelector((state) => state.posts.posts);
   const status = useSelector((state) => state.posts.status);
   const error = useSelector((state) => state.posts.error);
   const userId = useSelector((state) => state.auth.user.id);
 
   useEffect(() => {
-    if (status === "idle") {
-      dispatch(fetchPosts());
-    }
-  }, [status, dispatch]);
+    // Fetch posts every time the location changes
+    dispatch(fetchPosts());
+  }, [location, dispatch]);
 
   const handleDelete = (id) => {
     dispatch(deletePost(id));
@@ -47,7 +47,9 @@ const PostList = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 justify-start">
           {posts.map((post) => {
             const tags = post.tags[0].split(",").map((tag) => tag.trim());
-            const isLiked = post.likes.includes(userId);
+            const isLiked =
+              Array.isArray(post.likes) && post.likes.includes(userId);
+            const likesCount = post.likes?.length ?? 0; // Ensure likesCount is 0 if undefined
 
             return (
               <div
@@ -119,7 +121,7 @@ const PostList = () => {
                         } hover:underline`}
                       >
                         {isLiked ? <FaHeart /> : <FaRegHeart />}
-                        <span className="ml-2">{post.likes.length}</span>
+                        <span className="ml-2">{likesCount}</span>
                       </button>
                     </div>
                     <div className="text-sm text-gray-500 font-medium px-2">

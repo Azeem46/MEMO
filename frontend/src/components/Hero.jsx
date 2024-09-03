@@ -9,8 +9,9 @@ const Hero = () => {
   const user = useSelector((state) => state.auth.user);
 
   useEffect(() => {
+    // Redirect to home page if user is logged in
     if (user) {
-      navigate("/"); // Redirect to home page if user is logged in
+      navigate("/", { replace: true });
     }
   }, [user, navigate]);
 
