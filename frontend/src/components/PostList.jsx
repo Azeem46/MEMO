@@ -1,8 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import { fetchPosts, deletePost, likePost } from "../features/post/postSlice";
-import { FaEdit, FaTrashAlt, FaHeart, FaRegHeart } from "react-icons/fa";
+import {
+  FaEdit,
+  FaTrashAlt,
+  FaHeart,
+  FaRegHeart,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa";
 import SyncLoader from "react-spinners/SyncLoader";
 
 const PostList = () => {
@@ -13,11 +20,26 @@ const PostList = () => {
   const status = useSelector((state) => state.posts.status);
   const error = useSelector((state) => state.posts.error);
   const userId = useSelector((state) => state.auth.user.id);
+  const currentPage = useSelector((state) => state.posts.currentPage);
+  const numberOfPages = useSelector((state) => state.posts.numberOfPages);
+  const [page, setPage] = useState(1); // Track current page
 
   useEffect(() => {
     // Fetch posts every time the location changes
-    dispatch(fetchPosts());
-  }, [location, dispatch]);
+    dispatch(fetchPosts(page));
+  }, [location, dispatch, page]);
+
+  const handleNextPage = () => {
+    if (page < numberOfPages) {
+      setPage(page + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (page > 1) {
+      setPage(page - 1);
+    }
+  };
 
   const handleDelete = (id) => {
     dispatch(deletePost(id));
@@ -134,6 +156,26 @@ const PostList = () => {
           })}
         </div>
       )}
+      {/* Pagination Controls */}
+      <div className="flex justify-center mt-6 space-x-4">
+        <button
+          onClick={handlePreviousPage}
+          disabled={page === 1}
+          className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 disabled:opacity-50"
+        >
+          <FaChevronLeft />
+        </button>
+        <span className="flex items-center">
+          Page {currentPage} of {numberOfPages}
+        </span>
+        <button
+          onClick={handleNextPage}
+          disabled={page === numberOfPages}
+          className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 disabled:opacity-50"
+        >
+          <FaChevronRight />
+        </button>
+      </div>
     </div>
   );
 };

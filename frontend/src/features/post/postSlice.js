@@ -96,6 +96,8 @@ const postSlice = createSlice({
       .addCase(fetchPosts.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.posts = action.payload.data;
+        state.currentPage = action.payload.currentPage; // Add currentPage to state
+        state.numberOfPages = action.payload.numberOfPages; // Add numberOfPages to state
       })
       .addCase(fetchPosts.rejected, (state, action) => {
         state.status = "failed";
