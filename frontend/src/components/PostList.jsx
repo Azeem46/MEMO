@@ -110,7 +110,7 @@ const PostList = () => {
                   </p>
 
                   <div className="flex justify-between items-center mt-5">
-                    <div className="flex space-x-4">
+                    <div className="flex space-x-4 items-center">
                       {userId === post.creator && (
                         <>
                           <button
@@ -118,7 +118,7 @@ const PostList = () => {
                               e.stopPropagation();
                               navigate(`/edit/${post._id}`);
                             }}
-                            className="text-blue-500 hover:underline"
+                            className="text-blue-500 hover:underline flex items-center"
                           >
                             <FaEdit />
                           </button>
@@ -127,7 +127,7 @@ const PostList = () => {
                               e.stopPropagation();
                               handleDelete(post._id);
                             }}
-                            className="text-red-500 hover:underline"
+                            className="text-red-500 hover:underline flex items-center"
                           >
                             <FaTrashAlt />
                           </button>
@@ -146,7 +146,7 @@ const PostList = () => {
                         <span className="ml-2">{likesCount}</span>
                       </button>
                     </div>
-                    <div className="text-sm text-gray-500 font-medium px-2">
+                    <div className="text-sm text-gray-500 font-medium">
                       Published by: {post.creatorName}
                     </div>
                   </div>

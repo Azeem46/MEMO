@@ -54,6 +54,7 @@ export const signin = async (req, res) => {
         email: oldUser.email,
         id: oldUser._id,
         name: oldUser.name,
+        joinDate: oldUser.joinDate,
         token,
       },
     });
