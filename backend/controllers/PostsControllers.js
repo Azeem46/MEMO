@@ -181,3 +181,23 @@ export const commentPost = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
+
+export const incrementViews = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Find the post by ID
+    const post = await Posts.findById(id);
+    if (!post) return res.status(404).json({ message: "Post not found" });
+
+    // Increment the views count
+    post.views += 1;
+
+    // Save the updated post
+    const updatedPost = await post.save();
+
+    res.status(200).json(updatedPost);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};

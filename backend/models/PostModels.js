@@ -16,6 +16,10 @@ const postSchema = mongoose.Schema({
     ref: "User",
     required: true,
   },
+  views: {
+    type: Number,
+    default: 0, // Initialize with 0 views
+  },
   creatorName: String, // Add this field
 });
 
