@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { FaUserCircle, FaTag, FaHeart } from "react-icons/fa";
+import { FaUserCircle, FaTag, FaHeart, FaTrash } from "react-icons/fa";
 import SyncLoader from "react-spinners/SyncLoader"; // Import a loader
 import { formatDate } from "../utils/formatDate";
 import { useNavigate } from "react-router-dom";
 import { fetchPosts, incrementPostViews } from "../features/post/postSlice";
+import { GrView } from "react-icons/gr";
 
 const ProfileScreen = () => {
   const [activeTab, setActiveTab] = useState("posts");
@@ -81,19 +82,48 @@ const ProfileScreen = () => {
                 {userPosts.map((post) => (
                   <div
                     key={post._id}
-                    className="relative border p-4 rounded-lg shadow-sm bg-white group"
+                    className="flex border p-4 rounded-lg shadow-sm bg-white cursor-pointer"
                     onClick={() => handlePostClick(post._id)}
                   >
-                    <h2 className="text-lg font-bold">{post.title}</h2>
-                    <p className="text-sm text-gray-600">{post.message}</p>
-                    <p className="text-xs text-gray-500">{post.views} views</p>
-                    {/* Like link/button */}
-                    {/* <a
-                      href={`/post/${post._id}/likePost`}
-                      className="absolute bottom-2 left-2 text-blue-500 hover:underline opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      Like this post
-                    </a> */}
+                    {/* Post Image */}
+                    <img
+                      src={post.selectedFile}
+                      alt={post.title}
+                      className="w-32 h-32 object-cover rounded-lg mr-4"
+                    />
+
+                    {/* Post Content */}
+                    <div className="flex flex-col justify-between flex-1">
+                      <div>
+                        {/* Post Title */}
+                        <h2 className="text-lg font-bold text-black mb-2">
+                          {post.title}
+                        </h2>
+
+                        {/* Post Excerpt */}
+                        <p className="text-sm text-gray-600 line-clamp-3">
+                          {post.message}
+                        </p>
+                      </div>
+
+                      {/* Views and Interaction */}
+                      <div className="flex items-center justify-between text-gray-500 text-xs mt-2">
+                        {/* Views count */}
+                        <span className="flex items-center space-x-1">
+                          <GrView /> {/* View icon */}
+                          <span>{post.views} views</span>
+                        </span>
+
+                        {/* Interaction Buttons */}
+                        <div className="flex space-x-4">
+                          {/* Delete button */}
+                          <button className="flex items-center space-x-1 text-gray-500 hover:text-red-500">
+                            <FaTrash />
+                            <span>Delete</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
