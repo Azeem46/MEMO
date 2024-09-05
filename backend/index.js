@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 import postRoutes from "./routes/postsRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import commentRoute from "./routes/commentsRoutes.js";
+import bookmarkRoutes from "./routes/bookmarkRoutes.js";
 
 const app = express();
 dotenv.config();
@@ -28,6 +29,7 @@ app.use(cors());
 app.use("/posts", postRoutes);
 app.use("/user", userRoutes);
 app.use("/comments", commentRoute);
+app.use("/bookmarks", bookmarkRoutes);
 
 app.use(
   cors({
