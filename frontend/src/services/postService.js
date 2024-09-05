@@ -50,3 +50,6 @@ export const likePost = (id) => API.patch(`/posts/${id}/likePost`);
 export const updatePost = (id, updatedPost) =>
   API.patch(`/posts/${id}`, updatedPost);
 export const deletePost = (id) => API.delete(`/posts/${id}`);
+// src/services/postService.js
+// src/services/postService.js
+export const incrementViews = (id) => API.patch(`/posts/${id}/view`);

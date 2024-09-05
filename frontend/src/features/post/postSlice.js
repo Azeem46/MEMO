@@ -73,6 +73,13 @@ export const updateComment = createAsyncThunk(
   }
 );
 
+export const incrementPostViews = createAsyncThunk(
+  "posts/incrementPostViews",
+  async (id) => {
+    const response = await api.incrementViews(id);
+    return response.data;
+  }
+);
 export const clearPost = () => (dispatch) => {
   dispatch({ type: "CLEAR_POST" });
 };
@@ -146,6 +153,14 @@ const postSlice = createSlice({
         );
         if (index >= 0) {
           state.comments[index] = action.payload;
+        }
+      })
+      .addCase(incrementPostViews.fulfilled, (state, action) => {
+        const index = state.posts.findIndex(
+          (post) => post._id === action.payload._id
+        );
+        if (index >= 0) {
+          state.posts[index] = action.payload;
         }
       })
       .addCase("CLEAR_POST", (state) => {

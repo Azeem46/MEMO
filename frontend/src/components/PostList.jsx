@@ -1,7 +1,14 @@
+// src/components/PostList.jsx
+
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
-import { fetchPosts, deletePost, likePost } from "../features/post/postSlice";
+import {
+  fetchPosts,
+  deletePost,
+  likePost,
+  incrementPostViews,
+} from "../features/post/postSlice";
 import {
   FaEdit,
   FaTrashAlt,
@@ -15,17 +22,16 @@ import SyncLoader from "react-spinners/SyncLoader";
 const PostList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation(); // Hook to track location
+  const location = useLocation();
   const posts = useSelector((state) => state.posts.posts);
   const status = useSelector((state) => state.posts.status);
   const error = useSelector((state) => state.posts.error);
   const userId = useSelector((state) => state.auth.user.id);
   const currentPage = useSelector((state) => state.posts.currentPage);
   const numberOfPages = useSelector((state) => state.posts.numberOfPages);
-  const [page, setPage] = useState(1); // Track current page
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
-    // Fetch posts every time the location changes
     dispatch(fetchPosts(page));
   }, [location, dispatch, page]);
 
@@ -50,6 +56,7 @@ const PostList = () => {
   };
 
   const handlePostClick = (postId) => {
+    dispatch(incrementPostViews(postId)); // Increment view count when post is clicked
     navigate(`/post/${postId}`);
   };
 
@@ -71,7 +78,7 @@ const PostList = () => {
             const tags = post.tags[0].split(",").map((tag) => tag.trim());
             const isLiked =
               Array.isArray(post.likes) && post.likes.includes(userId);
-            const likesCount = post.likes?.length ?? 0; // Ensure likesCount is 0 if undefined
+            const likesCount = post.likes?.length ?? 0;
 
             return (
               <div
@@ -149,6 +156,9 @@ const PostList = () => {
                     <div className="text-sm text-gray-500 font-medium">
                       Published by: {post.creatorName}
                     </div>
+                    <div className="text-sm text-gray-500 font-medium">
+                      Views: {post.views ?? 0}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -156,7 +166,7 @@ const PostList = () => {
           })}
         </div>
       )}
-      {/* Pagination Controls */}
+
       <div className="flex justify-center mt-6 space-x-4">
         <button
           onClick={handlePreviousPage}

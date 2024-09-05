@@ -1,25 +1,34 @@
-import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { FaUserCircle, FaTag } from "react-icons/fa";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { FaUserCircle, FaTag, FaHeart } from "react-icons/fa";
+import SyncLoader from "react-spinners/SyncLoader"; // Import a loader
 import { formatDate } from "../utils/formatDate";
-import { fetchPosts } from "../features/post/postSlice";
+import { useNavigate } from "react-router-dom";
+import { fetchPosts, incrementPostViews } from "../features/post/postSlice";
 
 const ProfileScreen = () => {
-  const [activeTab, setActiveTab] = useState("posts"); // State to track active tab
+  const [activeTab, setActiveTab] = useState("posts");
+  const [loading, setLoading] = useState(true); // Loading state
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
-  console.log(user);
   const posts = useSelector((state) => state.posts.posts);
-  console.log(posts);
+  const navigate = useNavigate();
+
   // Filter posts by the current user's ID
   const userPosts = posts.filter((post) => post.creator === user.id);
-  console.log(userPosts);
 
   useEffect(() => {
-    if (!posts.length) {
-      dispatch(fetchPosts());
-    }
-  }, [dispatch, posts]);
+    setLoading(true); // Set loading true when fetching starts
+    dispatch(fetchPosts())
+      .unwrap()
+      .finally(() => setLoading(false)); // Disable loading when fetch is done
+  }, [dispatch]);
+
+  const handlePostClick = (postId) => {
+    navigate(`/post/${postId}`);
+    dispatch(incrementPostViews(postId));
+    // Navigate to post details or show modal, etc.
+  };
 
   return (
     <div className="py-14 px-4 max-sm:pt-4">
@@ -62,16 +71,29 @@ const ProfileScreen = () => {
         {activeTab === "posts" ? (
           <>
             <div className="text-xl font-semibold mb-4">Your Posts</div>
-            {userPosts.length > 0 ? (
+            {loading ? (
+              <div className="flex justify-center items-center h-40">
+                <SyncLoader size={15} color={"#3b82f6"} />{" "}
+                {/* Loading spinner */}
+              </div>
+            ) : userPosts.length > 0 ? (
               <div className="space-y-4">
                 {userPosts.map((post) => (
                   <div
                     key={post._id}
-                    className="border p-4 rounded-lg shadow-sm bg-white"
+                    className="relative border p-4 rounded-lg shadow-sm bg-white group"
+                    onClick={() => handlePostClick(post._id)}
                   >
                     <h2 className="text-lg font-bold">{post.title}</h2>
                     <p className="text-sm text-gray-600">{post.message}</p>
-                    {/* Add more post details here if needed */}
+                    <p className="text-xs text-gray-500">{post.views} views</p>
+                    {/* Like link/button */}
+                    {/* <a
+                      href={`/post/${post._id}/likePost`}
+                      className="absolute bottom-2 left-2 text-blue-500 hover:underline opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      Like this post
+                    </a> */}
                   </div>
                 ))}
               </div>
@@ -82,7 +104,6 @@ const ProfileScreen = () => {
         ) : (
           <div>
             <div className="text-xl font-semibold mb-4">Favourites</div>
-            {/* Add favourite posts logic here */}
             <p className="text-gray-600">No favourites to show.</p>
           </div>
         )}
