@@ -43,7 +43,6 @@ export const getBookmarks = async (req, res) => {
       model: "Posts", // Ensure you are using the correct model name here
     });
 
-    console.log("Bookmarks: ", bookmarks); // Log the bookmarks
     res.status(200).json(bookmarks);
   } catch (error) {
     console.error("Error fetching bookmarks: ", error); // Log the error

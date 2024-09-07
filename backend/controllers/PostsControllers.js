@@ -9,7 +9,7 @@ export const getPosts = async (req, res) => {
   const { page } = req.query;
 
   try {
-    const LIMIT = 9;
+    const LIMIT = 6;
     const startIndex = (Number(page) - 1) * LIMIT; // get the starting index of every page
 
     const total = await Posts.countDocuments({});
@@ -70,8 +70,6 @@ export const getPost = async (req, res) => {
 
 export const createPost = async (req, res) => {
   const post = req.body;
-
-  console.log("User ID from middleware:", req.userId);
 
   try {
     // Fetch the user's name from the User model
@@ -157,30 +155,30 @@ export const likePost = async (req, res) => {
   res.status(200).json(updatedPost);
 };
 
-export const commentPost = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { value } = req.body;
+// export const commentPost = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const { value } = req.body;
 
-    // Validate ObjectId
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Invalid post ID" });
-    }
+//     // Validate ObjectId
+//     if (!mongoose.Types.ObjectId.isValid(id)) {
+//       return res.status(400).json({ message: "Invalid post ID" });
+//     }
 
-    const post = await Posts.findById(id);
-    if (!post) {
-      return res.status(404).json({ message: "Post not found" });
-    }
+//     const post = await Posts.findById(id);
+//     if (!post) {
+//       return res.status(404).json({ message: "Post not found" });
+//     }
 
-    post.comments.push(value);
-    const updatedPost = await Posts.findByIdAndUpdate(id, post, { new: true });
+//     post.comments.push(value);
+//     const updatedPost = await Posts.findByIdAndUpdate(id, post, { new: true });
 
-    res.status(200).json(updatedPost);
-  } catch (error) {
-    console.error("Error adding comment:", error);
-    res.status(500).json({ message: "Server Error" });
-  }
-};
+//     res.status(200).json(updatedPost);
+//   } catch (error) {
+//     console.error("Error adding comment:", error);
+//     res.status(500).json({ message: "Server Error" });
+//   }
+// };
 
 export const incrementViews = async (req, res) => {
   const { id } = req.params;

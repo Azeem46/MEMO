@@ -8,6 +8,9 @@ import {
   deletePost,
   likePost,
   incrementPostViews,
+  createBookmark,
+  removeBookmark,
+  fetchBookmarks,
 } from "../features/post/postSlice";
 import {
   FaEdit,
@@ -16,8 +19,11 @@ import {
   FaRegHeart,
   FaChevronLeft,
   FaChevronRight,
+  FaBookmark,
+  FaRegBookmark,
 } from "react-icons/fa";
 import SyncLoader from "react-spinners/SyncLoader";
+import { toast } from "react-toastify";
 
 const PostList = () => {
   const dispatch = useDispatch();
@@ -27,13 +33,15 @@ const PostList = () => {
   const status = useSelector((state) => state.posts.status);
   const error = useSelector((state) => state.posts.error);
   const userId = useSelector((state) => state.auth.user.id);
+  const bookmarks = useSelector((state) => state.posts.bookmarks);
   const currentPage = useSelector((state) => state.posts.currentPage);
   const numberOfPages = useSelector((state) => state.posts.numberOfPages);
   const [page, setPage] = useState(1);
 
   useEffect(() => {
     dispatch(fetchPosts(page));
-  }, [location, dispatch, page]);
+    dispatch(fetchBookmarks(userId));
+  }, [location, dispatch, page, userId]);
 
   const handleNextPage = () => {
     if (page < numberOfPages) {
@@ -49,6 +57,7 @@ const PostList = () => {
 
   const handleDelete = (id) => {
     dispatch(deletePost(id));
+    toast.success("Post deleted successfully");
   };
 
   const handleLike = (id) => {
@@ -58,6 +67,26 @@ const PostList = () => {
   const handlePostClick = (postId) => {
     dispatch(incrementPostViews(postId)); // Increment view count when post is clicked
     navigate(`/post/${postId}`);
+  };
+
+  const handleBookmark = (post) => {
+    const isBookmarked = bookmarks.some(
+      (bookmark) => bookmark.post._id === post._id
+    );
+    if (isBookmarked) {
+      const bookmarkId = bookmarks.find(
+        (bookmark) => bookmark.post._id === post._id
+      )._id;
+      dispatch(removeBookmark(bookmarkId)).then(() => {
+        dispatch(fetchBookmarks(userId));
+        toast.success("Bookmark removed successfully!");
+      });
+    } else {
+      dispatch(createBookmark(post._id)).then(() => {
+        dispatch(fetchBookmarks(userId));
+        toast.success("Post bookmarked successfully!");
+      });
+    }
   };
 
   return (
@@ -79,6 +108,10 @@ const PostList = () => {
             const isLiked =
               Array.isArray(post.likes) && post.likes.includes(userId);
             const likesCount = post.likes?.length ?? 0;
+
+            const isBookmarked = bookmarks.some(
+              (bookmark) => bookmark.post._id === post._id
+            );
 
             return (
               <div
@@ -151,6 +184,17 @@ const PostList = () => {
                       >
                         {isLiked ? <FaHeart /> : <FaRegHeart />}
                         <span className="ml-2">{likesCount}</span>
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleBookmark(post);
+                        }}
+                        className={`flex items-center ${
+                          isBookmarked ? "text-yellow-500" : "text-gray-500"
+                        } hover:underline`}
+                      >
+                        {isBookmarked ? <FaBookmark /> : <FaRegBookmark />}
                       </button>
                     </div>
                     <div className="text-sm text-gray-500 font-medium">

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import login from "../../public/images/home.png";
+import login from "../../public/images/login.png";
 import PostList from "./PostList";
 
 const Hero = () => {

@@ -53,3 +53,7 @@ export const deletePost = (id) => API.delete(`/posts/${id}`);
 // src/services/postService.js
 // src/services/postService.js
 export const incrementViews = (id) => API.patch(`/posts/${id}/view`);
+export const fetchBookmarks = () => API.get(`/bookmarks`);
+export const createBookmark = (postId) => API.post(`/bookmarks`, { postId });
+export const removeBookmark = (bookmarkId) =>
+  API.delete(`/bookmarks/${bookmarkId}`);

@@ -80,6 +80,31 @@ export const incrementPostViews = createAsyncThunk(
     return response.data;
   }
 );
+
+export const fetchBookmarks = createAsyncThunk(
+  "posts/fetchBookmarks",
+  async (userId) => {
+    const response = await api.fetchBookmarks(userId);
+    return response.data;
+  }
+);
+
+export const createBookmark = createAsyncThunk(
+  "posts/createBookmark",
+  async (postId) => {
+    const response = await api.createBookmark(postId);
+
+    return response.data;
+  }
+);
+
+export const removeBookmark = createAsyncThunk(
+  "posts/removeBookmark",
+  async (bookmarkId) => {
+    const response = await api.removeBookmark(bookmarkId);
+    return response.data;
+  }
+);
 export const clearPost = () => (dispatch) => {
   dispatch({ type: "CLEAR_POST" });
 };
@@ -93,6 +118,7 @@ const postSlice = createSlice({
     comments: [], // Added comments array to state
     status: "idle",
     error: null,
+    bookmarks: [],
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -162,6 +188,23 @@ const postSlice = createSlice({
         if (index >= 0) {
           state.posts[index] = action.payload;
         }
+      })
+      .addCase(createBookmark.fulfilled, (state, action) => {
+        // Assuming you're adding the bookmark to the post's bookmark list
+        const post = state.posts.find(
+          (post) => post._id === action.payload.post._id
+        );
+        if (post) {
+          post.bookmarked = true; // mark the post as bookmarked
+        }
+      })
+      .addCase(removeBookmark.fulfilled, (state, action) => {
+        state.bookmarks = state.bookmarks.filter(
+          (bookmark) => bookmark._id !== action.payload._id
+        );
+      })
+      .addCase(fetchBookmarks.fulfilled, (state, action) => {
+        state.bookmarks = action.payload; // Store all bookmarks
       })
       .addCase("CLEAR_POST", (state) => {
         state.post = null;
