@@ -110,7 +110,7 @@ const PostList = () => {
             const likesCount = post.likes?.length ?? 0;
 
             const isBookmarked = bookmarks.some(
-              (bookmark) => bookmark.post._id === post._id
+              (bookmark) => bookmark?.post?._id === post._id
             );
 
             return (
