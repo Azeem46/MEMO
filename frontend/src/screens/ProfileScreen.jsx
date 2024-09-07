@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FaUserCircle, FaTag, FaHeart, FaTrash } from "react-icons/fa";
-import SyncLoader from "react-spinners/SyncLoader"; // Import a loader
+import SyncLoader from "react-spinners/SyncLoader";
 import { formatDate } from "../utils/formatDate";
 import { useNavigate } from "react-router-dom";
-import { fetchPosts, incrementPostViews } from "../features/post/postSlice";
+import {
+  fetchPosts,
+  incrementPostViews,
+  fetchBookmarks,
+} from "../features/post/postSlice";
 import { GrView } from "react-icons/gr";
 
 const ProfileScreen = () => {
@@ -13,17 +17,26 @@ const ProfileScreen = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
   const posts = useSelector((state) => state.posts.posts);
+  const bookmarks = useSelector((state) => state.posts.bookmarks); // Add this
+  console.log(bookmarks);
   const navigate = useNavigate();
 
   // Filter posts by the current user's ID
   const userPosts = posts.filter((post) => post.creator === user.id);
+
+  // Filter bookmarks by the current user's ID
+  const userBookmarks = bookmarks.filter(
+    (bookmark) => bookmark.user._id === user._id
+  );
 
   useEffect(() => {
     setLoading(true); // Set loading true when fetching starts
     dispatch(fetchPosts())
       .unwrap()
       .finally(() => setLoading(false)); // Disable loading when fetch is done
-  }, [dispatch]);
+
+    dispatch(fetchBookmarks(user._id)); // Fetch bookmarks
+  }, [dispatch, user._id]);
 
   const handlePostClick = (postId) => {
     navigate(`/post/${postId}`);
@@ -134,7 +147,58 @@ const ProfileScreen = () => {
         ) : (
           <div>
             <div className="text-xl font-semibold mb-4">Favourites</div>
-            <p className="text-gray-600">No favourites to show.</p>
+            {loading ? (
+              <div className="flex justify-center items-center h-40">
+                <SyncLoader size={15} color={"#3b82f6"} />{" "}
+                {/* Loading spinner */}
+              </div>
+            ) : userBookmarks.length > 0 ? (
+              <div className="space-y-4">
+                {userBookmarks.map((bookmark) => {
+                  const post = bookmark.post; // Ensure bookmark includes post
+                  return (
+                    <div
+                      key={post._id}
+                      className="flex border p-4 rounded-lg shadow-sm bg-white cursor-pointer"
+                      onClick={() => handlePostClick(post._id)}
+                    >
+                      {/* Post Image */}
+                      <img
+                        src={post.selectedFile}
+                        alt={post.title}
+                        className="w-32 h-32 object-cover rounded-lg mr-4"
+                      />
+
+                      {/* Post Content */}
+                      <div className="flex flex-col justify-between flex-1">
+                        <div>
+                          {/* Post Title */}
+                          <h2 className="text-lg font-bold text-black mb-2">
+                            {post.title}
+                          </h2>
+
+                          {/* Post Excerpt */}
+                          <p className="text-sm text-gray-600 line-clamp-3">
+                            {post.message}
+                          </p>
+                        </div>
+
+                        {/* Views and Interaction */}
+                        <div className="flex items-center justify-between text-gray-500 text-xs mt-2">
+                          {/* Views count */}
+                          <span className="flex items-center space-x-1">
+                            <GrView /> {/* View icon */}
+                            <span>{post.views} views</span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-gray-600">No favourites to show.</p>
+            )}
           </div>
         )}
       </div>
