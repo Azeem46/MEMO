@@ -18,7 +18,6 @@ const ProfileScreen = () => {
   const user = useSelector((state) => state.auth.user);
   const posts = useSelector((state) => state.posts.posts);
   const bookmarks = useSelector((state) => state.posts.bookmarks); // Add this
-  console.log(bookmarks);
   const navigate = useNavigate();
 
   // Filter posts by the current user's ID
@@ -156,7 +155,8 @@ const ProfileScreen = () => {
               <div className="space-y-4">
                 {userBookmarks.map((bookmark) => {
                   const post = bookmark.post; // Ensure bookmark includes post
-                  return (
+                  // Ensure post exists before rendering
+                  return post ? (
                     <div
                       key={post._id}
                       className="flex border p-4 rounded-lg shadow-sm bg-white cursor-pointer"
@@ -164,7 +164,7 @@ const ProfileScreen = () => {
                     >
                       {/* Post Image */}
                       <img
-                        src={post.selectedFile}
+                        src={post?.selectedFile}
                         alt={post.title}
                         className="w-32 h-32 object-cover rounded-lg mr-4"
                       />
@@ -193,7 +193,7 @@ const ProfileScreen = () => {
                         </div>
                       </div>
                     </div>
-                  );
+                  ) : null; // Ensure no errors if post is undefined
                 })}
               </div>
             ) : (

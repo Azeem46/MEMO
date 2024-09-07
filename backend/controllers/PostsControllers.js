@@ -85,11 +85,15 @@ export const createPost = async (req, res) => {
 
     await newPostMessage.save();
 
+    // Increment the post count for the user
+    await User.findByIdAndUpdate(req.userId, { $inc: { postCount: 1 } });
+
     res.status(201).json(newPostMessage);
   } catch (error) {
     res.status(409).json({ message: error.message });
   }
 };
+
 export const updatePost = async (req, res) => {
   const { id } = req.params;
   const { title, message, creator, selectedFile, tags } = req.body;
@@ -127,6 +131,9 @@ export const deletePost = async (req, res) => {
   // Delete the post if the user is authorized
   await Posts.findByIdAndRemove(id);
 
+  // Decrement the post count for the user
+  await User.findByIdAndUpdate(req.userId, { $inc: { postCount: -1 } });
+
   res.json({ message: "Post deleted successfully." });
 };
 
@@ -154,31 +161,6 @@ export const likePost = async (req, res) => {
 
   res.status(200).json(updatedPost);
 };
-
-// export const commentPost = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const { value } = req.body;
-
-//     // Validate ObjectId
-//     if (!mongoose.Types.ObjectId.isValid(id)) {
-//       return res.status(400).json({ message: "Invalid post ID" });
-//     }
-
-//     const post = await Posts.findById(id);
-//     if (!post) {
-//       return res.status(404).json({ message: "Post not found" });
-//     }
-
-//     post.comments.push(value);
-//     const updatedPost = await Posts.findByIdAndUpdate(id, post, { new: true });
-
-//     res.status(200).json(updatedPost);
-//   } catch (error) {
-//     console.error("Error adding comment:", error);
-//     res.status(500).json({ message: "Server Error" });
-//   }
-// };
 
 export const incrementViews = async (req, res) => {
   const { id } = req.params;
