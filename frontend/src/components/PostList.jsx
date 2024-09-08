@@ -24,6 +24,7 @@ import {
 } from "react-icons/fa";
 import SyncLoader from "react-spinners/SyncLoader";
 import { toast } from "react-toastify";
+import { GrView } from "react-icons/gr";
 import { decrementPostCount } from "../features/auth/authSlice";
 
 const PostList = () => {
@@ -206,8 +207,11 @@ const PostList = () => {
                     <div className="text-sm text-gray-500 font-medium">
                       Published by: {post.creatorName}
                     </div>
-                    <div className="text-sm text-gray-500 font-medium">
-                      Views: {post.views ?? 0}
+                    <div className="flex items-center text-sm text-gray-500 font-medium">
+                      <span className="flex items-center space-x-1">
+                        <GrView /> {/* View icon */}
+                        <span>{post.views}</span>
+                      </span>
                     </div>
                   </div>
                 </div>

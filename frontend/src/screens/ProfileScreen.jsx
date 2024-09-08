@@ -7,9 +7,12 @@ import { useNavigate } from "react-router-dom";
 import {
   fetchPosts,
   incrementPostViews,
+  deletePost,
   fetchBookmarks,
 } from "../features/post/postSlice";
 import { GrView } from "react-icons/gr";
+import { toast } from "react-toastify";
+import { decrementPostCount } from "../features/auth/authSlice";
 import { fetchUserById } from "../features/auth/userActions";
 
 const ProfileScreen = () => {
@@ -29,6 +32,16 @@ const ProfileScreen = () => {
   const userBookmarks = bookmarks.filter(
     (bookmark) => bookmark.user._id === user._id
   );
+
+  const handleDelete = async (id) => {
+    try {
+      await dispatch(deletePost(id)).unwrap(); // Ensure the delete operation completes
+      dispatch(decrementPostCount()); // Decrement post count locally
+      toast.success("Post deleted successfully");
+    } catch (error) {
+      toast.error("Failed to delete post");
+    }
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -132,7 +145,13 @@ const ProfileScreen = () => {
                         {/* Interaction Buttons */}
                         <div className="flex space-x-4">
                           {/* Delete button */}
-                          <button className="flex items-center space-x-1 text-gray-500 hover:text-red-500">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(post._id);
+                            }}
+                            className="flex items-center space-x-1 text-gray-500 hover:text-red-500"
+                          >
                             <FaTrash />
                             <span>Delete</span>
                           </button>
