@@ -57,12 +57,16 @@ const PostList = () => {
     }
   };
 
-  const handleDelete = (id) => {
-    dispatch(deletePost(id));
-    dispatch(decrementPostCount()); // Decrement post count locally
-    dispatch(fetchUserById(userId)); // Also fetch updated user data
-    toast.success("Post deleted successfully");
+  const handleDelete = async (id) => {
+    try {
+      await dispatch(deletePost(id)).unwrap(); // Ensure the delete operation completes
+      dispatch(decrementPostCount()); // Decrement post count locally
+      toast.success("Post deleted successfully");
+    } catch (error) {
+      toast.error("Failed to delete post");
+    }
   };
+
   const handleLike = (id) => {
     dispatch(likePost(id));
   };
