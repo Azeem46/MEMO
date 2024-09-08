@@ -24,7 +24,6 @@ import {
 } from "react-icons/fa";
 import SyncLoader from "react-spinners/SyncLoader";
 import { toast } from "react-toastify";
-import { fetchUserById } from "../features/auth/userActions";
 import { decrementPostCount } from "../features/auth/authSlice";
 
 const PostList = () => {
