@@ -55,6 +55,7 @@ export const signin = async (req, res) => {
         id: oldUser._id,
         name: oldUser.name,
         joinDate: oldUser.joinDate,
+        postCount: oldUser.postCount,
         token,
       },
     });
@@ -155,3 +156,18 @@ export const logoutUser = asyncHandler(async (req, res) => {
     res.status(404).json({ message: "something went wrong" });
   }
 });
+
+export const getUserById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await UserModal.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

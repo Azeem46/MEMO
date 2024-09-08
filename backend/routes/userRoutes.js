@@ -1,9 +1,14 @@
 import express from "express";
-import rateLimit from 'express-rate-limit';
+import rateLimit from "express-rate-limit";
 const router = express.Router();
 
-import { signin, signup, logoutUser } from "../controllers/UserContollers.js";
-import validateUser from '../middleware/validateUser.js';
+import {
+  signin,
+  signup,
+  logoutUser,
+  getUserById,
+} from "../controllers/UserContollers.js";
+import validateUser from "../middleware/validateUser.js";
 
 // Rate limiter for signin and signup routes
 // const authLimiter = rateLimit({
@@ -12,8 +17,9 @@ import validateUser from '../middleware/validateUser.js';
 //   message: 'Too many requests from this IP, please try again later.',
 // });
 
-router.post("/signin",  signin);
-router.post("/signup", validateUser ,signup);
-router.post('/logout', logoutUser);
+router.post("/signin", signin);
+router.post("/signup", validateUser, signup);
+router.post("/logout", logoutUser);
+router.get("/:id", getUserById);
 
 export default router;

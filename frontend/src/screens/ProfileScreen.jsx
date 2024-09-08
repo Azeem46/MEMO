@@ -10,6 +10,7 @@ import {
   fetchBookmarks,
 } from "../features/post/postSlice";
 import { GrView } from "react-icons/gr";
+import { fetchUserById } from "../features/auth/userActions";
 
 const ProfileScreen = () => {
   const [activeTab, setActiveTab] = useState("posts");
@@ -17,6 +18,7 @@ const ProfileScreen = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
   const posts = useSelector((state) => state.posts.posts);
+  const userInfo = useSelector((state) => state.auth.user);
   const bookmarks = useSelector((state) => state.posts.bookmarks); // Add this
   const navigate = useNavigate();
 
@@ -29,12 +31,12 @@ const ProfileScreen = () => {
   );
 
   useEffect(() => {
-    setLoading(true); // Set loading true when fetching starts
-    dispatch(fetchPosts())
-      .unwrap()
-      .finally(() => setLoading(false)); // Disable loading when fetch is done
-
-    dispatch(fetchBookmarks(user._id)); // Fetch bookmarks
+    setLoading(true);
+    Promise.all([
+      dispatch(fetchPosts()),
+      dispatch(fetchBookmarks(user._id)),
+      dispatch(fetchUserById(user._id)),
+    ]).finally(() => setLoading(false));
   }, [dispatch, user._id]);
 
   const handlePostClick = (postId) => {
@@ -55,6 +57,7 @@ const ProfileScreen = () => {
             </div>
           </div>
         </div>
+        <p>Post Count: {userInfo.postCount}</p>
         <div className="flex space-x-4">
           <button
             className={`py-2 px-6 rounded-lg font-semibold ${

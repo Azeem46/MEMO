@@ -24,6 +24,8 @@ import {
 } from "react-icons/fa";
 import SyncLoader from "react-spinners/SyncLoader";
 import { toast } from "react-toastify";
+import { fetchUserById } from "../features/auth/userActions";
+import { decrementPostCount } from "../features/auth/authSlice";
 
 const PostList = () => {
   const dispatch = useDispatch();
@@ -57,9 +59,10 @@ const PostList = () => {
 
   const handleDelete = (id) => {
     dispatch(deletePost(id));
+    dispatch(decrementPostCount()); // Decrement post count locally
+    dispatch(fetchUserById(userId)); // Also fetch updated user data
     toast.success("Post deleted successfully");
   };
-
   const handleLike = (id) => {
     dispatch(likePost(id));
   };

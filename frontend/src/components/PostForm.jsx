@@ -4,11 +4,14 @@ import { createPost, updatePost } from "../features/post/postSlice";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import ClipLoader from "react-spinners/ClipLoader";
+import { fetchUserById } from "../features/auth/userActions";
+import { incrementPostCount } from "../features/auth/authSlice";
 
 const PostForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
+  const userId = useSelector((state) => state.auth.user);
   const postToEdit = useSelector((state) =>
     id ? state.posts.posts.find((p) => p._id === id) : null
   );
@@ -67,6 +70,8 @@ const PostForm = () => {
       toast.success("Post updated successfully!");
     } else {
       await dispatch(createPost(post));
+      dispatch(incrementPostCount()); // Increment post count locally
+      await dispatch(fetchUserById(userId)); // Also fetch updated user data
       toast.success("Post created successfully!");
     }
 
