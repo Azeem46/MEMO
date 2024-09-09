@@ -23,6 +23,7 @@ import {
   FaRegBookmark,
 } from "react-icons/fa";
 import SyncLoader from "react-spinners/SyncLoader";
+import ClipLoader from "react-spinners/ClipLoader"; // Loader for delete button
 import { toast } from "react-toastify";
 import { GrView } from "react-icons/gr";
 import { decrementPostCount } from "../features/auth/authSlice";
@@ -39,6 +40,7 @@ const PostList = () => {
   const currentPage = useSelector((state) => state.posts.currentPage);
   const numberOfPages = useSelector((state) => state.posts.numberOfPages);
   const [page, setPage] = useState(1);
+  const [deletingPostId, setDeletingPostId] = useState(null);
 
   useEffect(() => {
     dispatch(fetchPosts(page));
@@ -59,11 +61,13 @@ const PostList = () => {
 
   const handleDelete = async (id) => {
     try {
+      setDeletingPostId(id); // Set the post as being deleted
       await dispatch(deletePost(id)).unwrap(); // Ensure the delete operation completes
-      dispatch(decrementPostCount()); // Decrement post count locally
       toast.success("Post deleted successfully");
     } catch (error) {
       toast.error("Failed to delete post");
+    } finally {
+      setDeletingPostId(null); // Reset the loading state
     }
   };
 
@@ -109,13 +113,12 @@ const PostList = () => {
       {status === "failed" && <p className="text-red-500">Error: {error}</p>}
 
       {status === "succeeded" && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 justify-start">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {posts.map((post) => {
             const tags = post.tags[0].split(",").map((tag) => tag.trim());
             const isLiked =
               Array.isArray(post.likes) && post.likes.includes(userId);
             const likesCount = post.likes?.length ?? 0;
-
             const isBookmarked = bookmarks.some(
               (bookmark) => bookmark?.post?._id === post._id
             );
@@ -123,97 +126,104 @@ const PostList = () => {
             return (
               <div
                 key={post._id}
-                className="relative bg-white shadow-md rounded-lg overflow-hidden cursor-pointer"
-                onClick={() => handlePostClick(post._id)}
+                className="bg-white shadow-md rounded-lg overflow-hidden flex flex-col h-full"
               >
-                <div className="relative">
+                <div className="relative h-48">
                   <img
                     src={post.selectedFile}
                     alt={post.title}
-                    className="w-full h-40 object-cover"
+                    className="w-full h-full object-cover"
                   />
                 </div>
-                <p className="mb-2 mt-2 ml-4">
-                  {tags.map((tag, index) => (
-                    <React.Fragment key={index}>
-                      {index > 0 && " "}#{tag}
-                    </React.Fragment>
-                  ))}
-                </p>
-                <b>
-                  <p className="mt-2 ml-4 text-2xl">{post.title}</p>
-                </b>
-                <div className="p-4">
-                  <p
-                    className="mb-4 overflow-hidden"
-                    style={{
-                      display: "-webkit-box",
-                      WebkitBoxOrient: "vertical",
-                      WebkitLineClamp: 2,
-                      textOverflow: "ellipsis",
-                    }}
-                  >
-                    <i>{post.message}</i>
-                  </p>
-
-                  <div className="flex justify-between items-center mt-5">
-                    <div className="flex space-x-4 items-center">
-                      {userId === post.creator && (
-                        <>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigate(`/edit/${post._id}`);
-                            }}
-                            className="text-blue-500 hover:underline flex items-center"
-                          >
-                            <FaEdit />
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDelete(post._id);
-                            }}
-                            className="text-red-500 hover:underline flex items-center"
-                          >
-                            <FaTrashAlt />
-                          </button>
-                        </>
-                      )}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleLike(post._id);
-                        }}
-                        className={`flex items-center ${
-                          isLiked ? "text-red-500" : "text-gray-500"
-                        } hover:underline`}
+                <div
+                  className="p-4 flex-grow flex flex-col"
+                  onClick={() => handlePostClick(post._id)} // Make the entire post card clickable
+                  role="button"
+                  tabIndex={0} // Ensure it's keyboard accessible
+                  onKeyDown={(e) =>
+                    e.key === "Enter" && handlePostClick(post._id)
+                  } // For accessibility
+                >
+                  <div className="mb-2">
+                    {tags.map((tag, index) => (
+                      <span
+                        key={index}
+                        className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
                       >
-                        {isLiked ? <FaHeart /> : <FaRegHeart />}
-                        <span className="ml-2">{likesCount}</span>
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleBookmark(post);
-                        }}
-                        className={`flex items-center ${
-                          isBookmarked ? "text-yellow-500" : "text-gray-500"
-                        } hover:underline`}
-                      >
-                        {isBookmarked ? <FaBookmark /> : <FaRegBookmark />}
-                      </button>
-                    </div>
-                    <div className="text-sm text-gray-500 font-medium">
-                      Published by: {post.creatorName}
-                    </div>
-                    <div className="flex items-center text-sm text-gray-500 font-medium">
-                      <span className="flex items-center space-x-1">
-                        <GrView /> {/* View icon */}
-                        <span>{post.views}</span>
+                        #{tag}
                       </span>
-                    </div>
+                    ))}
                   </div>
+                  <h2 className="text-xl font-bold mb-2">{post.title}</h2>
+                  <p className="text-gray-700 mb-4 flex-grow line-clamp-2">
+                    {post.message}
+                  </p>
+                  <div className="flex items-center justify-between text-sm text-gray-500">
+                    <span>Published by: {post.creatorName}</span>
+                    <span className="flex items-center">
+                      <GrView className="mr-1" /> {post.views}
+                    </span>
+                  </div>
+                </div>
+                <div className="px-4 py-2 bg-gray-100 flex justify-between items-center">
+                  <div className="flex space-x-4 items-center">
+                    {userId === post.creator && (
+                      <>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/edit/${post._id}`);
+                          }}
+                          className="text-blue-500 hover:text-blue-700"
+                        >
+                          <FaEdit />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(post._id);
+                          }}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          {/* Show loading spinner during delete operation */}
+                          {deletingPostId === post._id ? (
+                            <ClipLoader size={20} color={"#f87171"} />
+                          ) : (
+                            <FaTrashAlt />
+                          )}
+                        </button>
+                      </>
+                    )}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleLike(post._id);
+                      }}
+                      className={`flex items-center ${
+                        isLiked ? "text-red-500" : "text-gray-500"
+                      } hover:text-red-700`}
+                    >
+                      {isLiked ? <FaHeart /> : <FaRegHeart />}
+                      <span className="ml-1">{likesCount}</span>
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleBookmark(post);
+                      }}
+                      className={`${
+                        isBookmarked ? "text-yellow-500" : "text-gray-500"
+                      } hover:text-yellow-700`}
+                    >
+                      {isBookmarked ? <FaBookmark /> : <FaRegBookmark />}
+                    </button>
+                  </div>
+                  <button
+                    onClick={() => handlePostClick(post._id)}
+                    className="text-blue-500 hover:underline"
+                  >
+                    Read More
+                  </button>
                 </div>
               </div>
             );

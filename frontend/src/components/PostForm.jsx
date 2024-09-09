@@ -23,7 +23,6 @@ const PostForm = () => {
   const [showLoader, setShowLoader] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
 
-  // Using ref to directly access the file input element
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -80,15 +79,16 @@ const PostForm = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-2">
-      <h1 className="text-3xl font-semibold text-gray-800 mb-6">Create Post</h1>
-      <p className="text-sm text-gray-600 mb-6">
-        Ensure your title is at least 5 characters long for a concise and
-        captivating headline.
-      </p>
-      <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="max-w-4xl mx-auto p-8 bg-white shadow-xl rounded-lg mt-8">
+      <h1 className="text-4xl font-bold text-gray-900 mb-6 tracking-tight text-center">
+        Create a New Post
+      </h1>
+      <form onSubmit={handleSubmit} className="space-y-8">
         <div>
-          <label htmlFor="title" className="block text-lg text-gray-700 mb-2">
+          <label
+            htmlFor="title"
+            className="block text-xl font-semibold text-gray-700 mb-2"
+          >
             Title
           </label>
           <input
@@ -97,13 +97,20 @@ const PostForm = () => {
             name="title"
             value={post.title}
             onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            className="w-full p-4 border border-gray-300 rounded-lg focus:ring-4 focus:ring-blue-500 transition-shadow shadow-sm hover:shadow-md"
+            placeholder="Enter a captivating title"
             required
           />
+          <p className="text-sm text-gray-500 mt-1">
+            Your title should be at least 5 characters long for clarity.
+          </p>
         </div>
 
         <div>
-          <label htmlFor="message" className="block text-lg text-gray-700 mb-2">
+          <label
+            htmlFor="message"
+            className="block text-xl font-semibold text-gray-700 mb-2"
+          >
             Message
           </label>
           <textarea
@@ -111,19 +118,23 @@ const PostForm = () => {
             name="message"
             value={post.message}
             onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-            rows="6"
+            className="w-full p-4 border border-gray-300 rounded-lg focus:ring-4 focus:ring-blue-500 transition-shadow shadow-sm hover:shadow-md"
+            rows="3"
+            placeholder="Write something meaningful..."
             required
           />
-          <p className="text-sm text-gray-600 mt-2">
-            📝 Please write a minimum of 20 words to make your blog post
-            meaningful and engaging.
+          <p className="text-sm text-gray-500 mt-1">
+            📝 Make sure your message is at least 20 words to engage your
+            audience.
           </p>
         </div>
 
         <div>
-          <label htmlFor="tags" className="block text-lg text-gray-700 mb-2">
-            Tags (comma separated)
+          <label
+            htmlFor="tags"
+            className="block text-xl font-semibold text-gray-700 mb-2"
+          >
+            Tags (comma-separated)
           </label>
           <input
             type="text"
@@ -131,30 +142,42 @@ const PostForm = () => {
             name="tags"
             value={post.tags}
             onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            className="w-full p-4 border border-gray-300 rounded-lg focus:ring-4 focus:ring-blue-500 transition-shadow shadow-sm hover:shadow-md"
+            placeholder="e.g., tech, lifestyle"
           />
         </div>
 
         <div>
-          <label htmlFor="file" className="block text-lg text-gray-700 mb-2">
-            Image
+          <label
+            htmlFor="file"
+            className="block text-xl font-semibold text-gray-700 mb-2"
+          >
+            Upload an Image
           </label>
           <input
             type="file"
             id="file"
             ref={fileInputRef}
             onChange={handleFileChange}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            className="hidden"
           />
-          <p className="text-sm text-gray-600 mt-2">
-            Image size must be less than 10 MB*
-          </p>
+          <div className="flex items-center justify-between">
+            <button
+              type="button"
+              onClick={() => fileInputRef.current.click()}
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 focus:ring-4 focus:ring-blue-500 transition-transform transform hover:scale-105"
+            >
+              Choose Image
+            </button>
+            <p className="text-sm text-gray-500">Max size: 10 MB</p>
+          </div>
+
           {imagePreview && (
-            <div className="relative mt-4 w-full h-64">
+            <div className="relative mt-6 w-full h-64 rounded-lg shadow-lg overflow-hidden">
               <img
                 src={imagePreview}
-                alt="Preview"
-                className="w-full h-full object-cover rounded-lg shadow-md"
+                alt="Image Preview"
+                className="w-full h-full object-cover"
               />
               <button
                 type="button"
@@ -169,11 +192,11 @@ const PostForm = () => {
 
         <button
           type="submit"
-          className="w-full py-3 px-6 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 flex justify-center items-center"
+          className="w-full py-4 px-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-lg shadow-lg hover:shadow-2xl focus:ring-4 focus:ring-blue-500 transition-all flex justify-center items-center"
           disabled={loading}
         >
           {showLoader ? (
-            <ClipLoader size={24} color={"#ffffff"} delay={1000} />
+            <ClipLoader size={24} color={"#ffffff"} delay={500} />
           ) : (
             "Create Post"
           )}

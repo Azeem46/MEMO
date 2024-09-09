@@ -10,7 +10,7 @@ import {
 } from "../features/post/postSlice";
 import { useParams } from "react-router-dom";
 import { ThreeCircles } from "react-loader-spinner";
-import { timeAgo } from "../utils/timestamp";
+import { formatDate } from "../utils/formatDate";
 import { FaEdit, FaTrash } from "react-icons/fa";
 
 const PostDetails = () => {
@@ -179,7 +179,7 @@ const PostDetails = () => {
                     </div>
                     <div className="text-gray-700">{c.text.split(": ")[1]}</div>
                     <div className="text-gray-400 text-xs mt-1">
-                      {timeAgo(c.createdAt)}
+                      {formatDate(c.createdAt)}
                     </div>
                     {/* Edit and Delete icons */}
                     {c.userId._id === userId && (
