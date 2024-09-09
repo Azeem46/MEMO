@@ -10,6 +10,18 @@ export const fetchPosts = createAsyncThunk("posts/fetchPosts", async (page) => {
   return response.data;
 });
 
+export const fetchPostById = createAsyncThunk(
+  "posts/fetchById",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await api.fetchPost(id);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const fetchPost = createAsyncThunk("posts/fetchPost", async (id) => {
   const response = await api.fetchPost(id);
   return response.data;
@@ -205,6 +217,9 @@ const postSlice = createSlice({
       })
       .addCase(fetchBookmarks.fulfilled, (state, action) => {
         state.bookmarks = action.payload; // Store all bookmarks
+      })
+      .addCase(fetchPostById.fulfilled, (state, action) => {
+        state.currentPost = action.payload;
       })
       .addCase("CLEAR_POST", (state) => {
         state.post = null;

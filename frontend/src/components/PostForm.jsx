@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createPost, updatePost } from "../features/post/postSlice";
-import { useNavigate, useParams } from "react-router-dom";
+import { createPost } from "../features/post/postSlice";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import ClipLoader from "react-spinners/ClipLoader";
 import { fetchUserById } from "../features/auth/userActions";
@@ -10,11 +10,7 @@ import { incrementPostCount } from "../features/auth/authSlice";
 const PostForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { id } = useParams();
   const userId = useSelector((state) => state.auth.user);
-  const postToEdit = useSelector((state) =>
-    id ? state.posts.posts.find((p) => p._id === id) : null
-  );
 
   const [post, setPost] = useState({
     title: "",
@@ -23,16 +19,12 @@ const PostForm = () => {
     selectedFile: "",
   });
 
-  const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
 
-  useEffect(() => {
-    if (postToEdit) {
-      setPost(postToEdit);
-      setIsEditing(true);
-    }
-  }, [postToEdit]);
+  // Using ref to directly access the file input element
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     if (loading) {
@@ -54,6 +46,7 @@ const PostForm = () => {
 
     reader.onloadend = () => {
       setPost({ ...post, selectedFile: reader.result });
+      setImagePreview(reader.result);
     };
 
     if (file) {
@@ -61,32 +54,41 @@ const PostForm = () => {
     }
   };
 
+  const handleCancelImage = () => {
+    setPost({ ...post, selectedFile: "" });
+    setImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    if (id) {
-      await dispatch(updatePost({ id, updatedPost: post }));
-      toast.success("Post updated successfully!");
-    } else {
+    try {
       await dispatch(createPost(post));
-      dispatch(incrementPostCount()); // Increment post count locally
-      await dispatch(fetchUserById(userId)); // Also fetch updated user data
+      dispatch(incrementPostCount());
+      await dispatch(fetchUserById(userId));
       toast.success("Post created successfully!");
+      navigate("/");
+    } catch (error) {
+      toast.error("Failed to create post. Please try again.");
     }
 
     setLoading(false);
-    navigate("/");
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">
-        {id ? "Edit Post" : "Create Post"}
-      </h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-2">
+      <h1 className="text-3xl font-semibold text-gray-800 mb-6">Create Post</h1>
+      <p className="text-sm text-gray-600 mb-6">
+        Ensure your title is at least 5 characters long for a concise and
+        captivating headline.
+      </p>
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label htmlFor="title" className="block text-gray-700">
+          <label htmlFor="title" className="block text-lg text-gray-700 mb-2">
             Title
           </label>
           <input
@@ -95,12 +97,13 @@ const PostForm = () => {
             name="title"
             value={post.title}
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded"
+            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             required
           />
         </div>
+
         <div>
-          <label htmlFor="message" className="block text-gray-700">
+          <label htmlFor="message" className="block text-lg text-gray-700 mb-2">
             Message
           </label>
           <textarea
@@ -108,13 +111,18 @@ const PostForm = () => {
             name="message"
             value={post.message}
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded"
-            rows="4"
+            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            rows="6"
             required
           />
+          <p className="text-sm text-gray-600 mt-2">
+            📝 Please write a minimum of 20 words to make your blog post
+            meaningful and engaging.
+          </p>
         </div>
+
         <div>
-          <label htmlFor="tags" className="block text-gray-700">
+          <label htmlFor="tags" className="block text-lg text-gray-700 mb-2">
             Tags (comma separated)
           </label>
           <input
@@ -123,32 +131,49 @@ const PostForm = () => {
             name="tags"
             value={post.tags}
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded"
+            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
-        {!isEditing && (
-          <div>
-            <label htmlFor="file" className="block text-gray-700">
-              Image
-            </label>
-            <input
-              type="file"
-              id="file"
-              onChange={handleFileChange}
-              className="w-full p-2 border border-gray-300 rounded"
-            />
-          </div>
-        )}
+        <div>
+          <label htmlFor="file" className="block text-lg text-gray-700 mb-2">
+            Image
+          </label>
+          <input
+            type="file"
+            id="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+          />
+          <p className="text-sm text-gray-600 mt-2">
+            Image size must be less than 10 MB*
+          </p>
+          {imagePreview && (
+            <div className="relative mt-4 w-full h-64">
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="w-full h-full object-cover rounded-lg shadow-md"
+              />
+              <button
+                type="button"
+                onClick={handleCancelImage}
+                className="absolute top-2 right-2 bg-red-600 text-white rounded-full p-2 shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+              >
+                &times;
+              </button>
+            </div>
+          )}
+        </div>
+
         <button
           type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex justify-center items-center"
+          className="w-full py-3 px-6 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 flex justify-center items-center"
           disabled={loading}
         >
           {showLoader ? (
             <ClipLoader size={24} color={"#ffffff"} delay={1000} />
-          ) : id ? (
-            "Update Post"
           ) : (
             "Create Post"
           )}

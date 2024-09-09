@@ -149,7 +149,7 @@ const PostList = () => {
                     style={{
                       display: "-webkit-box",
                       WebkitBoxOrient: "vertical",
-                      WebkitLineClamp: 3,
+                      WebkitLineClamp: 2,
                       textOverflow: "ellipsis",
                     }}
                   >
