@@ -46,3 +46,4 @@ export const fetchBookmarks = () => API.get(`/bookmarks`);
 export const createBookmark = (postId) => API.post(`/bookmarks`, { postId });
 export const removeBookmark = (bookmarkId) =>
   API.delete(`/bookmarks/${bookmarkId}`);
+export const fetchLatestPosts = () => API.get(`/posts/latest`);

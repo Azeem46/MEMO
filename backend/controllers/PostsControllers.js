@@ -181,3 +181,12 @@ export const incrementViews = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+export const getLatestPosts = async (req, res) => {
+  try {
+    const latestPosts = await Posts.find().sort({ createdAt: -1 }).limit(10); // Adjust limit as needed
+    res.json(latestPosts);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch latest posts" });
+  }
+};

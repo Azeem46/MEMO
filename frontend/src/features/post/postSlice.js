@@ -117,6 +117,15 @@ export const removeBookmark = createAsyncThunk(
     return response.data;
   }
 );
+
+export const fetchLatestPosts = createAsyncThunk(
+  "posts/fetchLatestPosts",
+  async () => {
+    const response = await api.fetchLatestPosts();
+    return response.data;
+  }
+);
+
 export const clearPost = () => (dispatch) => {
   dispatch({ type: "CLEAR_POST" });
 };
@@ -131,6 +140,7 @@ const postSlice = createSlice({
     status: "idle",
     error: null,
     bookmarks: [],
+    latestPosts: [],
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -220,6 +230,17 @@ const postSlice = createSlice({
       })
       .addCase(fetchPostById.fulfilled, (state, action) => {
         state.currentPost = action.payload;
+      })
+      .addCase(fetchLatestPosts.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchLatestPosts.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.latestPosts = action.payload;
+      })
+      .addCase(fetchLatestPosts.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
       })
       .addCase("CLEAR_POST", (state) => {
         state.post = null;
