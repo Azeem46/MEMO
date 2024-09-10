@@ -20,6 +20,7 @@ import {
   FaChevronLeft,
   FaChevronRight,
   FaBookmark,
+  FaFire,
   FaRegBookmark,
 } from "react-icons/fa";
 import SyncLoader from "react-spinners/SyncLoader";
@@ -100,9 +101,20 @@ const PostList = () => {
     }
   };
 
+  const handleTrendingClick = () => {
+    navigate("/trending");
+  };
+
   return (
     <div className="mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Posts</h1>
+      <h1 className="text-2xl font-bold mb-3">Posts</h1>
+      <button
+        onClick={handleTrendingClick}
+        className="px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-full shadow-lg hover:from-orange-600 hover:to-red-600 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 flex items-center mb-2"
+      >
+        <FaFire className="mr-2" />
+        Trending
+      </button>
 
       {status === "loading" && (
         <div className="flex justify-center items-center h-64">

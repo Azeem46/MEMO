@@ -23,6 +23,7 @@ import PostForm from "./components/PostForm.jsx";
 import PostDetails from "./components/PostDetails.jsx";
 import PostEdit from "./components/PostEdit.jsx";
 import SearchResults from "./components/SearchResults.jsx";
+import TrendingPost from "./components/TrendingPost.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -37,6 +38,7 @@ const router = createBrowserRouter(
       <Route path="/create" element={<PostForm />} />
       <Route path="/edit/:id" element={<PostEdit />} />
       <Route path="/post/:id" element={<PostDetails />} />
+      <Route path="/trending" element={<TrendingPost />} />
       {/* <Route path="/search" element={<SearchResults />} /> */}
     </Route>
   )

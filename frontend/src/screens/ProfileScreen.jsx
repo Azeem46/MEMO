@@ -61,7 +61,7 @@ const ProfileScreen = () => {
   return (
     <div className="py-14 px-4 max-sm:pt-4">
       <div className="flex flex-col items-start space-y-4">
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 justify-between">
           <FaUserCircle className="text-7xl text-black" />
           <div className="text-black">
             <div className="text-xl font-semibold">{user.name}</div>
@@ -69,8 +69,18 @@ const ProfileScreen = () => {
               {formatDate(user.joinDate)}
             </div>
           </div>
+          <div class="flex flex-col items-center max-sm:flex-col-reverse">
+            <p class="font-semibold text-gray-600 font-poppins">Posts</p>
+            <p class="text-lg font-bold font-poppins">{userInfo.postCount}</p>
+          </div>
         </div>
-        <p>Post Count: {userInfo.postCount}</p>
+        {/* <div className="fixed right-4 p-2 mb-2">
+          <p className="font-bold text-xl">Post</p>
+          <p className="flex text-xl justify-center font-bold">
+            {userInfo.postCount}
+          </p>
+        </div> */}
+
         <div className="flex space-x-4">
           <button
             className={`py-2 px-6 rounded-lg font-semibold ${
