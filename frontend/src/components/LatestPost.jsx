@@ -1,17 +1,19 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
-import { fetchLatestPosts } from "../features/post/postSlice";
+import { fetchLatestPosts, likePost } from "../features/post/postSlice";
 import { GrView } from "react-icons/gr";
-import { likePost } from "../features/post/postSlice";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
-import SyncLoader from "react-spinners/SyncLoader"; // Optional loading spinner
+import SyncLoader from "react-spinners/SyncLoader";
 
 const LatestPost = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const latestPosts = useSelector((state) => state.posts.latestPosts || []); // Ensure latestPosts is always an array
+  const latestPostsFromRedux = useSelector(
+    (state) => state.posts.latestPosts || []
+  );
+  const [latestPosts, setLatestPosts] = useState([]);
   const status = useSelector((state) => state.posts.status);
   const error = useSelector((state) => state.posts.error);
   const userId = useSelector((state) => state.auth.user.id);
@@ -20,12 +22,30 @@ const LatestPost = () => {
     dispatch(fetchLatestPosts());
   }, [dispatch, location]);
 
+  useEffect(() => {
+    setLatestPosts(latestPostsFromRedux);
+  }, [latestPostsFromRedux]);
+
   const handlePostClick = (postId) => {
     navigate(`/post/${postId}`);
   };
 
-  const handleLike = (id) => {
-    dispatch(likePost(id));
+  const handleLike = async (id) => {
+    const response = await dispatch(likePost(id));
+    if (likePost.fulfilled.match(response)) {
+      setLatestPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post._id === id
+            ? {
+                ...post,
+                likes: post.likes.includes(userId)
+                  ? post.likes.filter((likeId) => likeId !== userId)
+                  : [...post.likes, userId],
+              }
+            : post
+        )
+      );
+    }
   };
 
   return (

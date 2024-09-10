@@ -69,9 +69,11 @@ const ProfileScreen = () => {
               {formatDate(user.joinDate)}
             </div>
           </div>
-          <div class="flex flex-col items-center max-sm:flex-col-reverse">
-            <p class="font-semibold text-gray-600 font-poppins">Posts</p>
-            <p class="text-lg font-bold font-poppins">{userInfo.postCount}</p>
+          <div className="flex flex-col items-center max-sm:flex-col-reverse">
+            <p className="font-semibold text-gray-600 font-poppins">Posts</p>
+            <p className="text-lg font-bold font-poppins">
+              {userInfo.postCount}
+            </p>
           </div>
         </div>
         {/* <div className="fixed right-4 p-2 mb-2">

@@ -1,9 +1,18 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { fetchPosts, incrementPostViews } from "../features/post/postSlice";
+import {
+  fetchPosts,
+  incrementPostViews,
+  likePost,
+} from "../features/post/postSlice";
 import { GrView } from "react-icons/gr";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import {
+  FaChevronLeft,
+  FaChevronRight,
+  FaHeart,
+  FaRegHeart,
+} from "react-icons/fa";
 import SyncLoader from "react-spinners/SyncLoader";
 
 const TrendingPost = () => {
@@ -34,6 +43,10 @@ const TrendingPost = () => {
     }
   };
 
+  const handleLike = (id) => {
+    dispatch(likePost(id));
+  };
+
   const handlePostClick = (postId) => {
     dispatch(incrementPostViews(postId)); // Increment view count
     navigate(`/post/${postId}`);
@@ -58,7 +71,9 @@ const TrendingPost = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {trendingPosts.map((post) => {
             const tags = post.tags[0].split(",").map((tag) => tag.trim());
-
+            const isLiked =
+              Array.isArray(post.likes) && post.likes.includes(userId);
+            const likesCount = post.likes?.length ?? 0;
             return (
               <div
                 key={post._id}
@@ -97,6 +112,18 @@ const TrendingPost = () => {
                   <div className="flex items-center justify-between text-sm text-gray-500">
                     <span>Published by: {post.creatorName}</span>
                     <span className="flex items-center">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleLike(post._id);
+                        }}
+                        className={`flex items-center mr-2 ${
+                          isLiked ? "text-red-500" : "text-gray-500"
+                        } hover:text-red-700`}
+                      >
+                        {isLiked ? <FaHeart /> : <FaRegHeart />}
+                        <span className="ml-1">{likesCount}</span>
+                      </button>
                       <GrView className="mr-1" /> {post.views} Views
                     </span>
                   </div>
