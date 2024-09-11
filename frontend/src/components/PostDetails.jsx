@@ -7,12 +7,16 @@ import {
   createComment,
   deleteComment,
   updateComment,
+  createBookmark,
+  removeBookmark,
+  fetchBookmarks,
 } from "../features/post/postSlice";
 import { useParams, useNavigate } from "react-router-dom";
 import { ThreeCircles } from "react-loader-spinner";
 import { formatDate } from "../utils/formatDate";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import { FaEdit, FaTrash, FaRegBookmark, FaBookmark } from "react-icons/fa";
 import { Bookmark } from "lucide-react";
+import { toast } from "react-toastify";
 
 const PostDetails = () => {
   const navigate = useNavigate();
@@ -22,19 +26,24 @@ const PostDetails = () => {
   const comments = useSelector((state) => state.posts.comments);
   const [comment, setComment] = useState("");
   const [editCommentId, setEditCommentId] = useState(null);
+  const bookmarks = useSelector((state) => state.posts.bookmarks);
   const [editText, setEditText] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false); // Add local state for submitting
   const user = useSelector((state) => state.auth.user.name);
   const userId = useSelector((state) => state.auth.user.id);
+  const isBookmarked = bookmarks.some(
+    (bookmark) => bookmark?.post?._id === post._id
+  );
 
   useEffect(() => {
     if (id) {
       dispatch(clearPost());
       dispatch(fetchPost(id));
       dispatch(fetchComments(id)); // Fetch comments for the post
+      dispatch(fetchBookmarks(userId)); // Fetch user's bookmarks
     }
-  }, [id, dispatch]);
+  }, [id, dispatch, userId]);
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
@@ -92,6 +101,26 @@ const PostDetails = () => {
     }
   };
 
+  const handleBookmark = (post) => {
+    const isBookmarked = bookmarks.some(
+      (bookmark) => bookmark.post._id === post._id
+    );
+    if (isBookmarked) {
+      const bookmarkId = bookmarks.find(
+        (bookmark) => bookmark.post._id === post._id
+      )._id;
+      dispatch(removeBookmark(bookmarkId)).then(() => {
+        dispatch(fetchBookmarks(userId));
+        toast.success("Bookmark removed successfully!");
+      });
+    } else {
+      dispatch(createBookmark(post._id)).then(() => {
+        dispatch(fetchBookmarks(userId));
+        toast.success("Post bookmarked successfully!");
+      });
+    }
+  };
+
   return (
     <div className="container mx-auto p-4 bg-gradient-to-r from-blue-50 to-blue-100 min-h-screen">
       {post ? (
@@ -106,8 +135,16 @@ const PostDetails = () => {
               className="w-full h-72 object-cover rounded-lg shadow-md mb-6"
             />
             <div className="flex justify-between w-full">
-              <button className="absolute bg-white bg-opacity-80 hover:bg-opacity-100 text-blue-600 rounded-full p-2 shadow-md transition-all duration-300 ease-in-out transform hover:scale-110 mt-1">
-                <Bookmark size={30} />
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleBookmark(post);
+                }}
+                className={`${
+                  isBookmarked ? "text-yellow-500" : "text-gray-500"
+                } hover:text-yellow-700`}
+              >
+                {isBookmarked ? <FaBookmark /> : <FaRegBookmark />}
               </button>
             </div>
             {userId === post.creator && (
