@@ -24,7 +24,7 @@ const Hero = () => {
       <>
         <button
           onClick={handleClick}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full flex items-center justify-center absolute mt-2 right-4"
+          className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-2 px-4 rounded-full shadow-lg hover:shadow-xl transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 flex items-center justify-center absolute mt-4 right-4"
         >
           Create <span className="ml-2">+</span>
         </button>
