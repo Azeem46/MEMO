@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import User from "../models/UserModels.js";
 import Posts from "../models/PostModels.js";
+import Bookmark from "../models/BookmarkModels.js";
 
 const router = express.Router();
 
@@ -133,6 +134,8 @@ export const deletePost = async (req, res) => {
 
   // Decrement the post count for the user
   await User.findByIdAndUpdate(req.userId, { $inc: { postCount: -1 } });
+
+  await Bookmark.deleteMany({ post: id });
 
   res.json({ message: "Post deleted successfully." });
 };

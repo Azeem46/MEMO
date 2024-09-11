@@ -64,6 +64,7 @@ const PostList = () => {
     try {
       setDeletingPostId(id); // Set the post as being deleted
       await dispatch(deletePost(id)).unwrap(); // Ensure the delete operation completes
+      dispatch(fetchBookmarks());
       toast.success("Post deleted successfully");
     } catch (error) {
       toast.error("Failed to delete post");
