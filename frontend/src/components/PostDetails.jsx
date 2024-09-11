@@ -32,9 +32,8 @@ const PostDetails = () => {
   const [isSubmitting, setIsSubmitting] = useState(false); // Add local state for submitting
   const user = useSelector((state) => state.auth.user.name);
   const userId = useSelector((state) => state.auth.user.id);
-  const isBookmarked = bookmarks.some(
-    (bookmark) => bookmark?.post?._id === post._id
-  );
+  const isBookmarked =
+    post && bookmarks.some((bookmark) => bookmark?.post?._id === post._id);
 
   useEffect(() => {
     if (id) {
