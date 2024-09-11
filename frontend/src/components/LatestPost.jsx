@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
-import { fetchLatestPosts, likePost } from "../features/post/postSlice";
+import {
+  fetchLatestPosts,
+  likePost,
+  incrementPostViews,
+} from "../features/post/postSlice";
 import { GrView } from "react-icons/gr";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import SyncLoader from "react-spinners/SyncLoader";
@@ -27,6 +31,7 @@ const LatestPost = () => {
   }, [latestPostsFromRedux]);
 
   const handlePostClick = (postId) => {
+    dispatch(incrementPostViews(postId));
     navigate(`/post/${postId}`);
   };
 

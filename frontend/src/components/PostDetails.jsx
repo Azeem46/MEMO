@@ -8,12 +8,14 @@ import {
   deleteComment,
   updateComment,
 } from "../features/post/postSlice";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { ThreeCircles } from "react-loader-spinner";
 import { formatDate } from "../utils/formatDate";
 import { FaEdit, FaTrash } from "react-icons/fa";
+import { Bookmark } from "lucide-react";
 
 const PostDetails = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { id } = useParams();
   const post = useSelector((state) => state.posts.post);
@@ -103,6 +105,26 @@ const PostDetails = () => {
               alt={post.title}
               className="w-full h-72 object-cover rounded-lg shadow-md mb-6"
             />
+            <div className="flex justify-between w-full">
+              <button className="absolute bg-white bg-opacity-80 hover:bg-opacity-100 text-blue-600 rounded-full p-2 shadow-md transition-all duration-300 ease-in-out transform hover:scale-110 mt-1">
+                <Bookmark size={30} />
+              </button>
+            </div>
+            {userId === post.creator && (
+              <div className="flex justify-end">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/edit/${post._id}`);
+                  }}
+                  className="text-blue-500 hover:text-blue-700 flex items-center p-3 mb-7 transition duration-200 ease-in-out transform border rounded-md shadow-md bg-slate-200 hover:bg-slate-300 focus:outline-none"
+                >
+                  <FaEdit className="mr-2" />
+                  <span>Edit Post</span>
+                </button>
+              </div>
+            )}
+
             <p className="text-gray-700 mb-4">{post.message}</p>
 
             {/* Updated Tag Display */}
