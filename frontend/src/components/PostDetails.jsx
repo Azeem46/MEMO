@@ -133,33 +133,38 @@ const PostDetails = () => {
               alt={post.title}
               className="w-full h-72 object-cover rounded-lg shadow-md mb-6"
             />
-            <div className="flex justify-between w-full">
+            <div className="flex justify-end gap-5">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   handleBookmark(post);
                 }}
-                className={`${
+                className={`flex justify-center p-5 mb-7 ${
                   isBookmarked ? "text-yellow-500" : "text-gray-500"
                 } hover:text-yellow-700`}
               >
-                {isBookmarked ? <FaBookmark /> : <FaRegBookmark />}
+                {isBookmarked ? (
+                  <FaBookmark className="w-5 h-5" />
+                ) : (
+                  <FaRegBookmark className="w-5 h-5" />
+                )}
               </button>
+
+              {userId === post.creator && (
+                <div className="flex justify-end">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/edit/${post._id}`);
+                    }}
+                    className="text-blue-500 hover:text-blue-700 flex items-center p-3 mb-7 transition duration-200 ease-in-out transform border rounded-md shadow-md bg-slate-200 hover:bg-slate-300 focus:outline-none"
+                  >
+                    <FaEdit className="mr-2" />
+                    <span>Edit Post</span>
+                  </button>
+                </div>
+              )}
             </div>
-            {userId === post.creator && (
-              <div className="flex justify-end">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate(`/edit/${post._id}`);
-                  }}
-                  className="text-blue-500 hover:text-blue-700 flex items-center p-3 mb-7 transition duration-200 ease-in-out transform border rounded-md shadow-md bg-slate-200 hover:bg-slate-300 focus:outline-none"
-                >
-                  <FaEdit className="mr-2" />
-                  <span>Edit Post</span>
-                </button>
-              </div>
-            )}
 
             <p className="text-gray-700 mb-4">{post.message}</p>
 
