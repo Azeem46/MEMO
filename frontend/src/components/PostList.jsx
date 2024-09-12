@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // src/components/PostList.jsx
 
 import React, { useEffect, useState } from "react";
@@ -27,7 +28,7 @@ import SyncLoader from "react-spinners/SyncLoader";
 import ClipLoader from "react-spinners/ClipLoader"; // Loader for delete button
 import { toast } from "react-toastify";
 import { GrView } from "react-icons/gr";
-import { decrementPostCount } from "../features/auth/authSlice";
+// import { decrementPostCount } from "../features/auth/authSlice";
 
 const PostList = () => {
   const dispatch = useDispatch();
@@ -65,6 +66,16 @@ const PostList = () => {
       setDeletingPostId(id); // Set the post as being deleted
       await dispatch(deletePost(id)).unwrap(); // Ensure the delete operation completes
       dispatch(fetchBookmarks());
+      // Update posts state locally instead of refetching
+      const updatedPosts = posts.filter((post) => post._id !== id);
+
+      // If there are no posts on the current page and we're not on the first page, move to the previous page
+      if (updatedPosts.length === 0 && page > 1) {
+        setPage((prevPage) => prevPage - 1); // Set page to the previous one
+      } else {
+        // If there are still posts, update the state with the new posts
+        dispatch(fetchPosts(page)); // Refetch the current page posts
+      }
       toast.success("Post deleted successfully");
     } catch (error) {
       toast.error("Failed to delete post");
