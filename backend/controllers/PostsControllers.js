@@ -9,17 +9,18 @@ const router = express.Router();
 
 export const getPosts = async (req, res) => {
   const { page } = req.query;
-  const LIMIT = 6;
-  const startIndex = (Number(page) - 1) * LIMIT; // get the starting index of every page
 
   try {
+    const LIMIT = 6;
+    const startIndex = (Number(page) - 1) * LIMIT; // get the starting index of every page
+
     const total = await Posts.countDocuments({});
     const posts = await Posts.find()
-      .sort({ views: -1 }) // Sort by views in descending order
+      .sort({ _id: -1 })
       .limit(LIMIT)
       .skip(startIndex);
 
-    res.status(200).json({
+    res.json({
       data: posts,
       currentPage: Number(page),
       numberOfPages: Math.ceil(total / LIMIT),
