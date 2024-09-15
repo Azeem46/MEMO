@@ -1,18 +1,15 @@
-import React, { useEffect } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
   fetchPosts,
   incrementPostViews,
   likePost,
 } from "../features/post/postSlice";
 import { GrView } from "react-icons/gr";
-import {
-  FaChevronLeft,
-  FaChevronRight,
-  FaHeart,
-  FaRegHeart,
-} from "react-icons/fa";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 import SyncLoader from "react-spinners/SyncLoader";
 
 const TrendingPost = () => {
@@ -24,24 +21,34 @@ const TrendingPost = () => {
   const userId = useSelector((state) => state.auth.user.id);
   const currentPage = useSelector((state) => state.posts.currentPage);
   const numberOfPages = useSelector((state) => state.posts.numberOfPages);
-  const [page, setPage] = React.useState(1);
+  const loaderRef = useRef(null);
 
-  // Fetch posts and handle pagination
+  // Fetch posts on initial load
   useEffect(() => {
-    dispatch(fetchPosts(page));
-  }, [dispatch, page]);
+    dispatch(fetchPosts(1)); // Load the first page initially
+  }, [dispatch]);
 
-  const handleNextPage = () => {
-    if (page < numberOfPages) {
-      setPage(page + 1);
-    }
-  };
+  // Fetch more posts when user scrolls to the bottom
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && currentPage < numberOfPages) {
+          dispatch(fetchPosts(currentPage + 1)); // Fetch next page
+        }
+      },
+      { threshold: 1.0 }
+    );
 
-  const handlePreviousPage = () => {
-    if (page > 1) {
-      setPage(page - 1);
+    if (loaderRef.current) {
+      observer.observe(loaderRef.current);
     }
-  };
+
+    return () => {
+      if (loaderRef.current) {
+        observer.unobserve(loaderRef.current);
+      }
+    };
+  }, [dispatch, currentPage, numberOfPages]);
 
   const handleLike = (id) => {
     dispatch(likePost(id));
@@ -55,11 +62,22 @@ const TrendingPost = () => {
   // Sort posts by views in descending order (highest first)
   const trendingPosts = [...posts].sort((a, b) => b.views - a.views);
 
+  // Framer Motion variants for post animations
+  const postVariants = {
+    hidden: { opacity: 0, y: 20 }, // Start hidden and slightly below
+    visible: {
+      opacity: 1,
+      y: 0, // Move to original position
+      transition: { duration: 0.5 },
+    },
+  };
+
   return (
     <div className="mx-auto p-4">
       <h1 className="text-2xl font-bold mb-3">Trending Posts</h1>
 
-      {status === "loading" && (
+      {/* Initial loader: only show when no posts are loaded yet */}
+      {status === "loading" && posts.length === 0 && (
         <div className="flex justify-center items-center h-64">
           <SyncLoader size={15} color={"#3b82f6"} />
         </div>
@@ -69,15 +87,19 @@ const TrendingPost = () => {
 
       {status === "succeeded" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {trendingPosts.map((post) => {
+          {trendingPosts.map((post, index) => {
             const tags = post.tags[0].split(",").map((tag) => tag.trim());
             const isLiked =
               Array.isArray(post.likes) && post.likes.includes(userId);
             const likesCount = post.likes?.length ?? 0;
             return (
-              <div
+              <motion.div
                 key={post._id}
                 className="bg-white shadow-md rounded-lg overflow-hidden flex flex-col h-full"
+                variants={postVariants}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
               >
                 <div className="relative h-48">
                   <img
@@ -128,30 +150,17 @@ const TrendingPost = () => {
                     </span>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>
       )}
 
-      <div className="flex justify-center mt-6 space-x-4">
-        <button
-          onClick={handlePreviousPage}
-          disabled={page === 1}
-          className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 disabled:opacity-50"
-        >
-          <FaChevronLeft />
-        </button>
-        <span className="flex items-center">
-          Page {currentPage} of {numberOfPages}
-        </span>
-        <button
-          onClick={handleNextPage}
-          disabled={page === numberOfPages}
-          className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 disabled:opacity-50"
-        >
-          <FaChevronRight />
-        </button>
+      {/* Infinite scroll loader: show only when fetching more posts */}
+      <div ref={loaderRef} className="flex justify-center mt-6">
+        {status === "loading" && posts.length > 0 && (
+          <SyncLoader size={15} color={"#3b82f6"} />
+        )}
       </div>
     </div>
   );
