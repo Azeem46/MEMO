@@ -136,6 +136,7 @@ const postSlice = createSlice({
   initialState: {
     posts: [],
     post: null,
+    hasMore: true,
     comments: [], // Added comments array to state
     status: "idle",
     error: null,
@@ -150,9 +151,18 @@ const postSlice = createSlice({
       })
       .addCase(fetchPosts.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.posts = action.payload.data;
-        state.currentPage = action.payload.currentPage; // Add currentPage to state
-        state.numberOfPages = action.payload.numberOfPages; // Add numberOfPages to state
+
+        // Filter out posts that already exist in the state
+        const newPosts = action.payload.data.filter(
+          (newPost) =>
+            !state.posts.some(
+              (existingPost) => existingPost._id === newPost._id
+            )
+        );
+
+        // Append only unique posts
+        state.posts = [...state.posts, ...newPosts];
+        state.hasMore = action.payload.hasMore;
       })
       .addCase(fetchPosts.rejected, (state, action) => {
         state.status = "failed";
@@ -162,7 +172,7 @@ const postSlice = createSlice({
         state.post = action.payload;
       })
       .addCase(createPost.fulfilled, (state, action) => {
-        state.posts.push(action.payload);
+        state.posts = [action.payload, ...state.posts]; // Prepend new post
       })
       .addCase(updatePost.fulfilled, (state, action) => {
         const index = state.posts.findIndex(

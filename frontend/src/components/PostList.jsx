@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 // src/components/PostList.jsx
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
@@ -28,6 +28,7 @@ import SyncLoader from "react-spinners/SyncLoader";
 import ClipLoader from "react-spinners/ClipLoader"; // Loader for delete button
 import { toast } from "react-toastify";
 import { GrView } from "react-icons/gr";
+import { motion } from "framer-motion";
 // import { decrementPostCount } from "../features/auth/authSlice";
 
 const PostList = () => {
@@ -43,23 +44,38 @@ const PostList = () => {
   const numberOfPages = useSelector((state) => state.posts.numberOfPages);
   const [page, setPage] = useState(1);
   const [deletingPostId, setDeletingPostId] = useState(null);
+  const hasMore = useSelector((state) => state.posts.hasMore);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const observer = useRef();
 
   useEffect(() => {
     dispatch(fetchPosts(page));
     dispatch(fetchBookmarks(userId));
   }, [location, dispatch, page, userId]);
 
-  const handleNextPage = () => {
-    if (page < numberOfPages) {
-      setPage(page + 1);
-    }
-  };
+  const lastPostRef = useRef(null);
 
-  const handlePreviousPage = () => {
+  // Infinite scrolling effect
+  useEffect(() => {
+    if (loadingMore || !hasMore || status === "loading") return;
+
+    if (observer.current) observer.current.disconnect();
+
+    observer.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasMore) {
+        setLoadingMore(true);
+        setPage((prevPage) => prevPage + 1);
+      }
+    });
+
+    if (lastPostRef.current) observer.current.observe(lastPostRef.current);
+  }, [loadingMore, hasMore, status]);
+
+  useEffect(() => {
     if (page > 1) {
-      setPage(page - 1);
+      dispatch(fetchPosts(page)).finally(() => setLoadingMore(false));
     }
-  };
+  }, [dispatch, page]);
 
   const handleDelete = async (id) => {
     try {
@@ -118,36 +134,42 @@ const PostList = () => {
   };
 
   return (
-    <div className="mx-auto p-4">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="mx-auto p-4"
+    >
       <h1 className="text-2xl font-bold mb-3">Posts</h1>
       <div className="flex item-center gap-5 ">
-        <button
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={handleTrendingClick}
-          className="px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-full shadow-lg hover:from-orange-600 hover:to-red-600 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 flex items-center mb-2"
+          className="px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-full shadow-lg hover:from-orange-600 hover:to-red-600 transition duration-300 ease-in-out transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 flex items-center mb-2"
         >
           <FaFire className="mr-2" />
           Trending
-        </button>
-        <button
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={() => navigate("/latest")}
-          className="block sm:hidden px-4 py-2 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-full shadow-lg hover:from-green-600 hover:to-teal-600 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 flex items-center mb-2"
+          className="block sm:hidden px-4 py-2 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-full shadow-lg hover:from-green-600 hover:to-teal-600 transition duration-300 ease-in-out transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 flex items-center mb-2"
         >
           <FaFire className="mr-2" />
           Latest
-        </button>
+        </motion.button>
       </div>
-
       {status === "loading" && (
         <div className="flex justify-center items-center h-64">
           <SyncLoader size={15} color={"#3b82f6"} />
         </div>
       )}
-
       {status === "failed" && <p className="text-red-500">Error: {error}</p>}
-
       {status === "succeeded" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {posts.map((post) => {
+          {posts.map((post, index) => {
             const tags = post.tags[0].split(",").map((tag) => tag.trim());
             const isLiked =
               Array.isArray(post.likes) && post.likes.includes(userId);
@@ -155,11 +177,16 @@ const PostList = () => {
             const isBookmarked = bookmarks.some(
               (bookmark) => bookmark?.post?._id === post._id
             );
+            const isLastPost = posts.length === index + 1; // Check if this is the last post
 
             return (
-              <div
+              <motion.div
                 key={post._id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
                 className="bg-white shadow-md rounded-lg overflow-hidden flex flex-col h-full"
+                ref={isLastPost ? lastPostRef : null}
               >
                 <div className="relative h-48">
                   <img
@@ -258,32 +285,37 @@ const PostList = () => {
                     Read More
                   </button>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>
       )}
-
-      <div className="flex justify-center mt-6 space-x-4">
-        <button
-          onClick={handlePreviousPage}
-          disabled={page === 1}
-          className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 disabled:opacity-50"
+      {loadingMore && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{
+            duration: 0.5,
+            repeat: Infinity,
+            repeatType: "reverse",
+          }}
+          className="flex justify-center items-center mt-6"
         >
-          <FaChevronLeft />
-        </button>
-        <span className="flex items-center">
-          Page {currentPage} of {numberOfPages}
-        </span>
-        <button
-          onClick={handleNextPage}
-          disabled={page === numberOfPages}
-          className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 disabled:opacity-50"
-        >
-          <FaChevronRight />
-        </button>
-      </div>
-    </div>
+          <motion.div
+            style={{ borderWidth: "4px", borderColor: "#000" }} // Adjust the color and width of the circle border
+            className="border-solid border-4 border-gray-800 rounded-full h-8 w-8"
+            animate={{
+              scale: [1, 1.2, 1],
+            }}
+            transition={{
+              repeat: Infinity,
+              duration: 0.6,
+              ease: "easeInOut",
+            }}
+          />
+        </motion.div>
+      )}
+    </motion.div>
   );
 };
 

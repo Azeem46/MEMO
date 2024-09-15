@@ -8,22 +8,19 @@ import Comment from "../models/comment.js";
 const router = express.Router();
 
 export const getPosts = async (req, res) => {
-  const { page } = req.query;
+  const { page = 1 } = req.query; // only use page now, no limit
 
   try {
-    const LIMIT = 6;
-    const startIndex = (Number(page) - 1) * LIMIT; // get the starting index of every page
-
-    const total = await Posts.countDocuments({});
+    const startIndex = (Number(page) - 1) * 6; // assuming 6 posts per page for infinite scroll
     const posts = await Posts.find()
-      .sort({ _id: -1 })
-      .limit(LIMIT)
-      .skip(startIndex);
+      .sort({ _id: -1 }) // Sort by latest
+      .skip(startIndex); // No limit, fetch all from startIndex
+
+    const hasMore = (await Posts.countDocuments()) > startIndex + posts.length;
 
     res.json({
       data: posts,
-      currentPage: Number(page),
-      numberOfPages: Math.ceil(total / LIMIT),
+      hasMore, // Indicate if there are more posts to load
     });
   } catch (error) {
     res.status(404).json({ message: error.message });
