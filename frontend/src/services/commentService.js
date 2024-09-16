@@ -3,7 +3,7 @@
 import axios from "axios";
 
 // Create an axios instance
-const API = axios.create({ baseURL: "http://localhost:5000" });
+const API = axios.create({ baseURL: "https://memo-uwip.onrender.com" });
 
 // Set up request interceptor to include auth token
 API.interceptors.request.use((req) => {
