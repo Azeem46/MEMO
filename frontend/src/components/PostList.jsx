@@ -29,7 +29,7 @@ import ClipLoader from "react-spinners/ClipLoader"; // Loader for delete button
 import { toast } from "react-toastify";
 import { GrView } from "react-icons/gr";
 import { motion } from "framer-motion";
-// import { decrementPostCount } from "../features/auth/authSlice";
+import { decrementPostCount } from "../features/auth/authSlice";
 
 const PostList = () => {
   const dispatch = useDispatch();
@@ -82,6 +82,8 @@ const PostList = () => {
       setDeletingPostId(id); // Set the post as being deleted
       await dispatch(deletePost(id)).unwrap(); // Ensure the delete operation completes
       dispatch(fetchBookmarks());
+      dispatch(decrementPostCount());
+
       // Update posts state locally instead of refetching
       const updatedPosts = posts.filter((post) => post._id !== id);
 
