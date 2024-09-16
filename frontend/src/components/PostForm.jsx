@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createPost } from "../features/post/postSlice";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "react-toastify"; // Toast notifications
 import ClipLoader from "react-spinners/ClipLoader";
 import { fetchUserById } from "../features/auth/userActions";
 import { incrementPostCount } from "../features/auth/authSlice";
@@ -63,6 +63,13 @@ const PostForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Image validation
+    if (!post.selectedFile) {
+      toast.error("Please upload an image to create the post.");
+      return; // Stop form submission if no image is uploaded
+    }
+
     setLoading(true);
 
     try {
