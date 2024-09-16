@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://memo-uwip.onrender.com"; // Replace with your backend URL
+const API_URL = import.meta.env.VITE_API_URL; // Replace with your backend URL
 
 export const login = async (email, password) => {
   const response = await axios.post(`${API_URL}/user/signin`, {

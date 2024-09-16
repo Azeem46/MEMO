@@ -1,7 +1,9 @@
 import axios from "axios";
 
 // Create an axios instance
-const API = axios.create({ baseURL: "https://memo-uwip.onrender.com" }); // Replace with your backend URL
+const API_URL = import.meta.env.VITE_API_URL;
+
+const API = axios.create({ baseURL: API_URL }); // Replace with your backend URL
 
 // Set up request interceptor to include auth token
 API.interceptors.request.use((req) => {
