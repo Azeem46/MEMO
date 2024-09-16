@@ -4,7 +4,7 @@ import {
   getCommentsByPost,
   updateComment,
   deleteComment,
-} from "../controllers/commentsController.js";
+} from "../controllers/CommentsController.js";
 import auth from "../middleware/auth.js";
 
 const router = express.Router();
