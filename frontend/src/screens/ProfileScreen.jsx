@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { FaUserCircle, FaTag, FaHeart, FaTrash } from "react-icons/fa";
+import { FaUserCircle, FaTag, FaTrash } from "react-icons/fa";
 import SyncLoader from "react-spinners/SyncLoader";
 import { formatDate } from "../utils/formatDate";
 import { useNavigate } from "react-router-dom";
@@ -103,7 +103,7 @@ const ProfileScreen = () => {
             onClick={() => setActiveTab("favourites")}
           >
             <FaTag />
-            <span>Favourites</span>
+            <span>Bookmarks</span>
           </button>
         </div>
       </div>
@@ -179,7 +179,7 @@ const ProfileScreen = () => {
           </>
         ) : (
           <div>
-            <div className="text-xl font-semibold mb-4">Favourites</div>
+            <div className="text-xl font-semibold mb-4">Bookmarks</div>
             {loading ? (
               <div className="flex justify-center items-center h-40">
                 <SyncLoader size={15} color={"#3b82f6"} />{" "}
@@ -231,7 +231,7 @@ const ProfileScreen = () => {
                 })}
               </div>
             ) : (
-              <p className="text-gray-600">No favourites to show.</p>
+              <p className="text-gray-600">No bookmarks to show.</p>
             )}
           </div>
         )}
