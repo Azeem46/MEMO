@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { FaUserCircle, FaTag, FaTrash } from "react-icons/fa";
+import { FaUserCircle, FaBookmark, FaTrash } from "react-icons/fa";
 import SyncLoader from "react-spinners/SyncLoader";
 import { formatDate } from "../utils/formatDate";
 import { useNavigate } from "react-router-dom";
@@ -102,7 +102,7 @@ const ProfileScreen = () => {
             }`}
             onClick={() => setActiveTab("favourites")}
           >
-            <FaTag />
+            <FaBookmark />
             <span>Bookmarks</span>
           </button>
         </div>
