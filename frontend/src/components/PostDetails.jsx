@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchPost,
@@ -15,7 +15,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import { ThreeCircles } from "react-loader-spinner";
 import { formatDate } from "../utils/formatDate";
 import { FaEdit, FaTrash, FaRegBookmark, FaBookmark } from "react-icons/fa";
-import { Bookmark } from "lucide-react";
 import { toast } from "react-toastify";
 
 const PostDetails = () => {
@@ -169,12 +168,12 @@ const PostDetails = () => {
             <p className="text-gray-700 mb-4">{post.message}</p>
 
             {/* Updated Tag Display */}
-            <div className="flex flex-wrap text-gray-600 mb-4">
+            <div className="flex flex-wrap mb-2">
               {post.tags &&
                 post.tags[0].split(",").map((tag, index) => (
                   <span
                     key={index}
-                    className="mr-2 bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm"
+                    className="mr-2 mb-2 bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm"
                   >
                     {index > 0 && " "}#{tag.trim()}
                   </span>
