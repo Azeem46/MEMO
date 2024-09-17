@@ -53,6 +53,7 @@ mongoose
   .catch((error) => console.log(error.message));
 
 // Cron job configuration
-cron.schedule("0 0 * * *", () => {
-  console.log("Running a task every day at midnight");
+// Run every 30 minutes
+cron.schedule("*/30 * * * *", () => {
+  console.log("Pinging the server to keep it awake");
 });
