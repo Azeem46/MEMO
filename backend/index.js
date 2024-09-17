@@ -28,7 +28,7 @@ app.use(apiLimiter); // Apply rate limiter to all routes
 
 app.use(
   cors({
-    origin: "http://localhost:5173", // Adjust based on where your frontend is running
+    origin: ["http://localhost:5173", "https://memo-five-beta.vercel.app"], // Allow multiple origins
     methods: ["GET", "POST", "PATCH", "DELETE"],
   })
 );
