@@ -3,8 +3,8 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import rateLimit from "express-rate-limit"; // uncommented
-import cron from "node-cron"; // Add node-cron
+import rateLimit from "express-rate-limit";
+import cron from "node-cron";
 import postRoutes from "./routes/postsRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import commentRoute from "./routes/commentsRoutes.js";
@@ -23,15 +23,16 @@ const apiLimiter = rateLimit({
 // Middleware
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
-app.use(cors());
-app.use(apiLimiter); // Apply rate limiter to all routes
 
+// Correct CORS setup for allowed origins
 app.use(
   cors({
     origin: ["http://localhost:5173", "https://memo-five-beta.vercel.app"], // Allow multiple origins
     methods: ["GET", "POST", "PATCH", "DELETE"],
   })
 );
+
+app.use(apiLimiter); // Apply rate limiter to all routes
 
 // Routes
 app.use("/posts", postRoutes);
