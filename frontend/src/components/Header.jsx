@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../features/auth/authSlice";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { logout as logoutService } from "../services/authService";
 import download from "../../public/images/download.png";
 import {
@@ -56,7 +56,7 @@ const Header = () => {
         <Link to="/">
           <div className="flex items-center space-x-2 ml-2">
             <img src={download} alt="Blog Verse Logo" className="h-10" />
-            <span className="text-black font-bold text-lg">OPPAI</span>
+            <span className="text-black font-bold text-lg">MEMO</span>
           </div>
         </Link>
         <div className="flex space-x-4 mr-4">
