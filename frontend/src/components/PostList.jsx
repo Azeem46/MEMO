@@ -18,8 +18,6 @@ import {
   FaTrashAlt,
   FaHeart,
   FaRegHeart,
-  FaChevronLeft,
-  FaChevronRight,
   FaBookmark,
   FaFire,
   FaRegBookmark,
@@ -53,29 +51,29 @@ const PostList = () => {
     dispatch(fetchBookmarks(userId));
   }, [location, dispatch, page, userId]);
 
-  const lastPostRef = useRef(null);
+  // const lastPostRef = useRef(null);
 
-  // Infinite scrolling effect
-  useEffect(() => {
-    if (loadingMore || !hasMore || status === "loading") return;
+  // // Infinite scrolling effect
+  // useEffect(() => {
+  //   if (loadingMore || !hasMore || status === "loading") return;
 
-    if (observer.current) observer.current.disconnect();
+  //   if (observer.current) observer.current.disconnect();
 
-    observer.current = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting && hasMore) {
-        setLoadingMore(true);
-        setPage((prevPage) => prevPage + 1);
-      }
-    });
+  //   observer.current = new IntersectionObserver((entries) => {
+  //     if (entries[0].isIntersecting && hasMore) {
+  //       setLoadingMore(true);
+  //       setPage((prevPage) => prevPage + 1);
+  //     }
+  //   });
 
-    if (lastPostRef.current) observer.current.observe(lastPostRef.current);
-  }, [loadingMore, hasMore, status]);
+  //   if (lastPostRef.current) observer.current.observe(lastPostRef.current);
+  // }, [loadingMore, hasMore, status]);
 
-  useEffect(() => {
-    if (page > 1) {
-      dispatch(fetchPosts(page)).finally(() => setLoadingMore(false));
-    }
-  }, [dispatch, page]);
+  // useEffect(() => {
+  //   if (page > 1) {
+  //     dispatch(fetchPosts(page)).finally(() => setLoadingMore(false));
+  //   }
+  // }, [dispatch, page]);
 
   const handleDelete = async (id) => {
     try {
@@ -188,7 +186,7 @@ const PostList = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.1 }}
                 className="bg-white shadow-md rounded-lg overflow-hidden flex flex-col h-full"
-                ref={isLastPost ? lastPostRef : null}
+                // ref={isLastPost ? lastPostRef : null}
               >
                 <div className="relative h-48">
                   <img
@@ -212,7 +210,7 @@ const PostList = () => {
                         key={index}
                         className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
                       >
-                        #{tag}
+                        {index > 0 && " "}#{tag}
                       </span>
                     ))}
                   </div>
@@ -292,7 +290,7 @@ const PostList = () => {
           })}
         </div>
       )}
-      {loadingMore && (
+      {/* {loadingMore && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -316,7 +314,7 @@ const PostList = () => {
             }}
           />
         </motion.div>
-      )}
+      )} */}
     </motion.div>
   );
 };

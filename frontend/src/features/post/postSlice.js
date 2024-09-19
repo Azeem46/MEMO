@@ -151,18 +151,7 @@ const postSlice = createSlice({
       })
       .addCase(fetchPosts.fulfilled, (state, action) => {
         state.status = "succeeded";
-
-        // Filter out posts that already exist in the state
-        const newPosts = action.payload.data.filter(
-          (newPost) =>
-            !state.posts.some(
-              (existingPost) => existingPost._id === newPost._id
-            )
-        );
-
-        // Append only unique posts
-        state.posts = [...state.posts, ...newPosts];
-        state.hasMore = action.payload.hasMore;
+        state.posts = action.payload.data;
       })
       .addCase(fetchPosts.rejected, (state, action) => {
         state.status = "failed";
