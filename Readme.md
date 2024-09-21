@@ -72,9 +72,11 @@
 
 2. **Install dependencies:**
 
-   ```bash
-   npm install
-   ```
+- **You need to do this in both frontend and backend:**
+
+  ```bash
+  npm install
+  ```
 
 3. **Set up environment variables:**
 
