@@ -105,6 +105,8 @@
 
 ## Login
 
+**After you get token copy go to authorization header select bearer token and paste under that**
+
 **Endpoint:** `POST /user/signin`
 
 **Request Body:**
@@ -132,7 +134,7 @@
 }
 ```
 
-### Posts
+## Posts
 
 - **GET /api/posts**
   - Response: List of posts
