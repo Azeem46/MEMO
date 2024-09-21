@@ -73,12 +73,64 @@
 
 ### Authentication
 
-- **POST /api/auth/register**
-  - Request body: `{ username, password }`
-  - Response: User object
-- **POST /api/auth/login**
-  - Request body: `{ username, password }`
-  - Response: JWT token
+### Register
+
+**Endpoint:** `POST /user/signup`
+
+**Request Body:**
+
+```json
+{
+  "name": "Azeem",
+  "email": "azeem@gmail.com",
+  "password": "Password1!"
+}
+```
+
+**Response:**
+
+```json
+{
+  "result": {
+    "name": "Azeem1",
+    "email": "azeem@gmail.com",
+    "password": "$2a$12$C9YnXFCZmgtFG7gA4qqBPuIbv/31ADTHfEXXxt/a4I2sKNOlklx1e",
+    "postCount": 0,
+    "_id": "66eee0c3645adca5b3741976",
+    "joinDate": "2024-09-21T15:05:39.625Z",
+    "__v": 0
+  }
+}
+```
+
+## Login
+
+**Endpoint:** `POST /user/signin`
+
+**Request Body:**
+
+```json
+{
+  "email": "azeem@gmail.com",
+  "password": "Password1!"
+}
+```
+
+**Response:**
+
+```json
+{
+  "message": "User signed in successfully",
+  "user": {
+    "email": "azeem@gmail.com",
+    "id": "66eee0c3645adca5b3741976",
+    "name": "Azeem1",
+    "joinDate": "2024-09-21T15:05:39.625Z",
+    "postCount": 0,
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImF6ZWVtQGdtYWlsLmNvbSIsImlkIjoiNjZlZWUwYzM2NDVhZGNhNWIzNzQxOTc2IiwiaWF0IjoxNzI2OTMxMjE2LCJleHAiOjE3NTg0ODg4MTZ9.MJtPBvzndFmPsV4I5ZMFt_A3srCbNYEgi47u0d5ZIWo"
+  }
+}
+```
 
 ### Posts
 
