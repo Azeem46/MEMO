@@ -170,7 +170,10 @@ const PostList = () => {
       {status === "succeeded" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {posts.map((post, index) => {
-            const tags = post.tags[0].split(",").map((tag) => tag.trim());
+            const tags =
+              post.tags && post.tags[0]
+                ? post.tags[0].split(",").map((tag) => tag.trim())
+                : [];
             const isLiked =
               Array.isArray(post.likes) && post.likes.includes(userId);
             const likesCount = post.likes?.length ?? 0;
