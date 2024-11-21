@@ -171,3 +171,36 @@ export const getUserById = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// Upload profile picture
+export const uploadProfilePic = async (req, res) => {
+  try {
+    const { id } = req.body; // Assuming user ID is sent in the request body
+    const profilePicUrl = req.file ? req.file.path : null; // Cloudinary provides the file URL
+
+    if (!id || !profilePicUrl) {
+      return res
+        .status(400)
+        .json({ message: "User ID and profile picture are required" });
+    }
+
+    // Update user's profile picture in the database
+    const user = await UserModal.findByIdAndUpdate(
+      id,
+      { profilePic: profilePicUrl },
+      { new: true } // Return the updated document
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      message: "Profile picture uploaded successfully",
+      user,
+    });
+  } catch (error) {
+    console.error("Error uploading profile picture:", error);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};

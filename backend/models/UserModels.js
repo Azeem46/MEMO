@@ -13,6 +13,7 @@ const userSchema = mongoose.Schema({
     type: Number,
     default: 0, // Initialize to 0
   },
+  profilePic: { type: String }, // New field for profile picture URL or path
 });
 
 export default mongoose.model("User", userSchema);
