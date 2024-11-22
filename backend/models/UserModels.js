@@ -6,7 +6,7 @@ const userSchema = mongoose.Schema({
   password: { type: String, required: true },
   joinDate: {
     type: Date,
-    default: Date.now, // Automatically set the current date
+    default: Date.now,
   },
   id: { type: String },
   postCount: {

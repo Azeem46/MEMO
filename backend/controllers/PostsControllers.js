@@ -11,7 +11,7 @@ export const getPosts = async (req, res) => {
   const { page = 1 } = req.query; // only use page now, no limit
 
   try {
-    const startIndex = (Number(page) - 1) * 6; // assuming 6 posts per page for infinite scroll
+    const startIndex = (Number(page) - 1) * 6;
     const posts = await Posts.find()
       .sort({ _id: -1 }) // Sort by latest
       .skip(startIndex); // No limit, fetch all from startIndex
@@ -78,7 +78,7 @@ export const createPost = async (req, res) => {
     const newPostMessage = new Posts({
       ...post,
       creator: req.userId,
-      creatorName, // Add creatorName here
+      creatorName,
       createdAt: new Date().toISOString(),
     });
 

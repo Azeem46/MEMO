@@ -175,7 +175,7 @@ export const getUserById = async (req, res) => {
 // Upload profile picture
 export const uploadProfilePic = async (req, res) => {
   try {
-    const { id } = req.body; // Assuming user ID is sent in the request body
+    const { id } = req.body;
     const profilePicUrl = req.file ? req.file.path : null; // Cloudinary provides the file URL
 
     if (!id || !profilePicUrl) {

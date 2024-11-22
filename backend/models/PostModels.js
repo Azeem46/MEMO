@@ -20,7 +20,7 @@ const postSchema = mongoose.Schema({
     type: Number,
     default: 0, // Initialize with 0 views
   },
-  creatorName: String, // Add this field
+  creatorName: String,
 });
 
 const Posts = mongoose.model("Posts", postSchema);

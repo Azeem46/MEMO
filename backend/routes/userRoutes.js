@@ -1,5 +1,5 @@
 import express from "express";
-import rateLimit from "express-rate-limit";
+// import rateLimit from "express-rate-limit";
 const router = express.Router();
 
 import {
@@ -10,7 +10,7 @@ import {
   uploadProfilePic,
 } from "../controllers/UserContollers.js";
 import validateUser from "../middleware/validateUser.js";
-import upload from "../middleware/multerConfig.js"; // Import Multer-Cloudinary configuration
+import upload from "../middleware/multerConfig.js";
 // Rate limiter for signin and signup routes
 // const authLimiter = rateLimit({
 //   windowMs: 15 * 60 * 1000, // 15 minutes

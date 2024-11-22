@@ -35,17 +35,17 @@ export const createBookmark = async (req, res) => {
 // Get all bookmarks of a user
 export const getBookmarks = async (req, res) => {
   const userId = req.userId; // this should be set by the authentication middleware
-  console.log("User ID: ", userId); // Add this log to check userId
+  console.log("User ID: ", userId);
 
   try {
     const bookmarks = await BookMark.find({ user: userId }).populate({
       path: "post",
-      model: "Posts", // Ensure you are using the correct model name here
+      model: "Posts",
     });
 
     res.status(200).json(bookmarks);
   } catch (error) {
-    console.error("Error fetching bookmarks: ", error); // Log the error
+    console.error("Error fetching bookmarks: ", error);
     res.status(500).json({ message: "Something went wrong" });
   }
 };
@@ -73,7 +73,7 @@ export const removeBookmark = async (req, res) => {
 
     res.status(200).json({ message: "Bookmark removed" });
   } catch (error) {
-    console.error("Error during bookmark removal:", error); // Log the error for debugging
+    console.error("Error during bookmark removal:", error);
     res
       .status(500)
       .json({ message: "Something went wrong", error: error.message });

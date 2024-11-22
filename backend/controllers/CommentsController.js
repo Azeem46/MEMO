@@ -4,7 +4,7 @@ import Post from "../models/PostModels.js";
 // Create a new comment
 export const createComment = async (req, res) => {
   const { postId, text } = req.body;
-  const userId = req.userId; // Assume `req.userId` is set by the auth middleware
+  const userId = req.userId;
 
   try {
     const post = await Post.findById(postId);

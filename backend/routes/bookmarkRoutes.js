@@ -4,7 +4,7 @@ import {
   getBookmarks,
   removeBookmark,
 } from "../controllers/bookmarkController.js";
-import auth from "../middleware/auth.js"; // Assuming you have auth middleware to protect routes
+import auth from "../middleware/auth.js";
 
 const router = express.Router();
 
